@@ -1,0 +1,27 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes" ?>
+<donnees>
+    <MAJ>01/01/2019</MAJ>
+    <mois nom="Janvier">
+        <credits>
+            <categorie nom="A" montant="10.0" date_du_virement="01/02/2019"  statut="true" />
+            <categorie nom="B" montant="20.0" date_du_virement="01/03/2019" statut="true" />
+            <categorie nom="C" montant="30.0" date_du_virement="01/04/2019" statut="true" />
+        </credits>
+        <credits>
+            <categorie nom="AA" montant="-10.0" date_du_virement="01/02/2019"  statut="true" />
+            <categorie nom="BB" montant="-20.0" date_du_virement="01/03/2019" statut="true" />
+            <categorie nom="CC" montant="-30.0" date_du_virement="01/04/2019" statut="true" />
+        </credits>
+    </mois>
+    <mois nom="Février"></mois>
+    <mois nom="Mars"></mois>
+    <mois nom="Avril"></mois>
+    <mois nom="Mai"></mois>
+    <mois nom="Juin"></mois>
+    <mois nom="Juillet"></mois>
+    <mois nom="Août"></mois>
+    <mois nom="Septembre"></mois>
+    <mois nom="Ocotbre"></mois>
+    <mois nom="Novembre"></mois>
+    <mois nom="Décembre"></mois>
+</donnees>
