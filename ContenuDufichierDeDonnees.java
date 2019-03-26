@@ -41,7 +41,7 @@ public class ContenuDufichierDeDonnees {
 	}
 	
 	// Affichage du contenu du dico contenant les données du fichier XML
-	public void AffichageContenuFichierXML ()
+	public void affichageContenuFichierXML ()
 	{
 		for (Map.Entry<String, Hashtable> mp1: contenuFichierXML.entrySet())
 		{
@@ -72,7 +72,108 @@ public class ContenuDufichierDeDonnees {
 			}
 		}
 	}
+	
+	// 
+	public Map<String, Hashtable> recuperationDonneesMoisSelectionne(String moisSelectionne)
+	{
+		// Déclaration des variables
+		Map<String, Hashtable> dicoDonnees = new Hashtable<String, Hashtable>(); 
 		
+		Hashtable dicoDonneesCredits = new Hashtable();
+		List<String> listeDesEnTetesCredits = new ArrayList<String>();
+		List<List<?>> valeursCredits = new ArrayList<>();
+		
+		Hashtable dicoDonneesDebits = new Hashtable();
+		List<String> listeDesEnTetesDebits = new ArrayList<String>();
+		List<List<?>> valeursDebits = new ArrayList<>();
+		
+//		Object[][] valeurs;
+		
+		// ...
+		if (contenuFichierXML.containsKey(moisSelectionne))
+		{
+			Hashtable<String, Hashtable> dicoTmp = contenuFichierXML.get(moisSelectionne);
+			
+			if (dicoTmp.containsKey("crédits"))
+			{
+				Map<String, Hashtable> dicoTmp2 = dicoTmp.get("crédits");
+				
+				for (Map.Entry<String, Hashtable> elem: dicoTmp2.entrySet())
+				{
+					String nomCategorie = elem.getKey();
+					listeDesEnTetesCredits.add(nomCategorie);
+					
+					Map<String, Hashtable> categories = elem.getValue();
+					
+					for (Map.Entry<String, Hashtable> elem2: categories.entrySet())
+					{
+						Map<String, String> valeursCategorie = elem2.getValue();
+						
+						Float montant = Float.valueOf(valeursCategorie.get("montant"));
+						String dateVirement = valeursCategorie.get("date_du_virement");
+						Boolean statut = Boolean.valueOf(valeursCategorie.get("statut"));
+						
+						List listeTmp = new ArrayList();
+						listeTmp.add(montant);
+						listeTmp.add(dateVirement);
+						listeTmp.add(statut);
+						
+						valeursCredits.add(listeTmp);
+					}
+				}
+			}
+			else if (dicoTmp.containsKey("dédits"))
+			{
+				Map<String, Hashtable> dicoTmp2 = dicoTmp.get("dédits");
+				
+				for (Map.Entry<String, Hashtable> elem: dicoTmp2.entrySet())
+				{
+					String nomCategorie = elem.getKey();
+					listeDesEnTetesDebits.add(nomCategorie);
+					
+					Map<String, Hashtable> categories = elem.getValue();
+					
+					for (Map.Entry<String, Hashtable> elem2: categories.entrySet())
+					{
+						Map<String, String> valeursCategorie = elem2.getValue();
+						
+						Float montant = Float.valueOf(valeursCategorie.get("montant"));
+						String dateVirement = valeursCategorie.get("date_du_virement");
+						Boolean statut = Boolean.valueOf(valeursCategorie.get("statut"));
+						
+						List listeTmp = new ArrayList();
+						listeTmp.add(montant);
+						listeTmp.add(dateVirement);
+						listeTmp.add(statut);
+						
+						valeursDebits.add(listeTmp);
+					}
+				}
+			} 
+//			else
+//			{
+//				0
+//			}
+		}
+//		// ...
+//		else
+//		{
+//			
+//		}
+		
+		// Retour de la méthode
+		dicoDonneesCredits.put("en-tetes", listeDesEnTetesCredits);
+		dicoDonneesCredits.put("donnees", valeursCredits);
+		
+		dicoDonneesDebits.put("en-tetes", listeDesEnTetesDebits);
+		dicoDonneesDebits.put("donnees", valeursDebits);
+		
+		dicoDonnees.put("crédits",  dicoDonneesCredits);
+		dicoDonnees.put("débits",  dicoDonneesDebits);
+		
+		return dicoDonnees;
+	}
+	
 	// Récupération du contenu du fichier XML
 	public Map recuperationDuContenu(NodeList liste)
 	{
