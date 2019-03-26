@@ -13,6 +13,12 @@ public class LectureDuFichierDeDonnees
 	private String nomDuFichierDeDonnees;
 	private ContenuDufichierDeDonnees contenuDuFichierDeDonnees;
 	
+	// Accesseurs
+	public ContenuDufichierDeDonnees getContenuDuFichierDeDonnees()
+	{
+		return contenuDuFichierDeDonnees; 
+	}
+	
 	// Constructeur avec argument
 	public LectureDuFichierDeDonnees(String nomDuFichierDeDonnees)
 	{

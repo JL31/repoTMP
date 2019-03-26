@@ -6,6 +6,6 @@ public class Main
 		LectureDuFichierDeDonnees lfd = new LectureDuFichierDeDonnees("Test.xml");
 		
 		// Lancement de l'application
-		Fenetre fen = new Fenetre();
+		Fenetre fen = new Fenetre(lfd.getContenuDuFichierDeDonnees());
 	}
 }

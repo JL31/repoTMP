@@ -13,6 +13,12 @@ public class ContenuDufichierDeDonnees {
 	private String dateDeMiseAJour;
 	private Map<String, Hashtable> contenuFichierXML = new Hashtable<String, Hashtable>();
 	
+	// Accesseurs
+	public Map<String, Hashtable> getContenuFichierXMl()
+	{
+		return contenuFichierXML;
+	}
+	
 	// Constructeur avec arguments
 	public ContenuDufichierDeDonnees(Document doc)
 	{

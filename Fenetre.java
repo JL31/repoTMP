@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
+import java.util.Hashtable;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -20,11 +22,13 @@ public class Fenetre extends JFrame {
 	private PartieCentrale conteneurPartieCentrale;
 	private PanneauLateral conteneurPartieDroite = new PanneauLateral();
 	private String nomDuBoutonUtilise;
+	private ContenuDufichierDeDonnees donnees;
 	
-	
-	// Constructeur de la fenêtre principale
-	public Fenetre()
+	// Constructeur de la fenêtre principale (avec arguments)
+	public Fenetre(ContenuDufichierDeDonnees donnees)
 	{
+		this.donnees = donnees;
+		
 		// Paramètres globaux de la fenêtre principale
 	    this.setExtendedState(JFrame.MAXIMIZED_BOTH);			// pour mettre l'application en plein écran 
 	    this.setUndecorated(true);								// pour enlever la barre du haut contenant les icônes réduire, agrandir et fermer (permet vraiment le passage en plein écran)
@@ -97,7 +101,21 @@ public class Fenetre extends JFrame {
 			else
 			{
 				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
+				
+				if (donnees.getContenuFichierXMl().containsKey(nomDuBoutonUtilise))
+				{
+					Map<String, Hashtable> tut = donnees.getContenuFichierXMl().get(nomDuBoutonUtilise);
+					for (Map.Entry<String, Hashtable> iteu: tut.entrySet())
+					{
+						String a = iteu.getKey();
+						Map<String, String> b = iteu.getValue();
+						System.out.println(a);
+						System.out.println(b);
+					}
+				}
+				
 				conteneurPartieCentrale = new PartieCentraleMois();
+				
 				Fenetre.this.actualiserAffichage();
 			}
 			
