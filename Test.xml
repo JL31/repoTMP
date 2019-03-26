@@ -2,16 +2,16 @@
 <donnees>
     <MAJ>01/01/2019</MAJ>
     <mois nom="Janvier">
-        <credits>
-            <categorie nom="A" montant="10.0" date_du_virement="01/02/2019"  statut="true" />
-            <categorie nom="B" montant="20.0" date_du_virement="01/03/2019" statut="true" />
-            <categorie nom="C" montant="30.0" date_du_virement="01/04/2019" statut="true" />
-        </credits>
-        <credits>
-            <categorie nom="AA" montant="-10.0" date_du_virement="01/02/2019"  statut="true" />
-            <categorie nom="BB" montant="-20.0" date_du_virement="01/03/2019" statut="true" />
-            <categorie nom="CC" montant="-30.0" date_du_virement="01/04/2019" statut="true" />
-        </credits>
+        <crédits>
+            <catégorie nom="A" montant="10.0" date_du_virement="01/02/2019" statut="true" />
+            <catégorie nom="B" montant="20.0" date_du_virement="01/03/2019" statut="true" />
+            <catégorie nom="C" montant="30.0" date_du_virement="01/04/2019" statut="true" />
+        </crédits>
+        <débits>
+            <catégorie nom="AA" montant="-10.0" date_du_virement="01/02/2019" statut="true" />
+            <catégorie nom="BB" montant="-20.0" date_du_virement="01/03/2019" statut="true" />
+            <catégorie nom="CC" montant="-30.0" date_du_virement="01/04/2019" statut="true" />
+        </débits>
     </mois>
     <mois nom="Février"></mois>
     <mois nom="Mars"></mois>
