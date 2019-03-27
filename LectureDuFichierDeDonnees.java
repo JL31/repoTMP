@@ -38,7 +38,7 @@ public class LectureDuFichierDeDonnees
 			
 			// Création de l'objet qui va contenir le contenu du fichier de données
 			contenuDuFichierDeDonnees = new ContenuDufichierDeDonnees(doc);
-			contenuDuFichierDeDonnees.AffichageContenuFichierXML();
+			contenuDuFichierDeDonnees.affichageContenuFichierXML();
 		}
 		catch (ParserConfigurationException e)
 		{

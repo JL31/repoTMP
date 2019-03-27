@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -23,23 +24,50 @@ public class Fenetre extends JFrame {
 	private PanneauLateral conteneurPartieDroite = new PanneauLateral();
 	private String nomDuBoutonUtilise;
 	private ContenuDufichierDeDonnees donnees;
+	private Hashtable<Integer, String> dicoCorrespondanceDesMois = new Hashtable<Integer, String>();
+	private Object[][] donneesCredits;
+	private Object[] enTetesCredits;
+	private Object[][] donneesDebits;
+	private Object[] enTetesDebits;
+	
+	// Initialisation de certaines variables d'instance
+	private void initialisationVariables()
+	{
+		dicoCorrespondanceDesMois.put(1, "Janvier");
+		dicoCorrespondanceDesMois.put(2, "Février");
+		dicoCorrespondanceDesMois.put(3, "Mars");
+		dicoCorrespondanceDesMois.put(4, "Avril");
+		dicoCorrespondanceDesMois.put(5, "Mai");
+		dicoCorrespondanceDesMois.put(6, "Juin");
+		dicoCorrespondanceDesMois.put(7, "Juillet");
+		dicoCorrespondanceDesMois.put(8, "Août");
+		dicoCorrespondanceDesMois.put(9, "Septembre");
+		dicoCorrespondanceDesMois.put(10, "Octobre");
+		dicoCorrespondanceDesMois.put(11, "Novembre");
+		dicoCorrespondanceDesMois.put(12, "Décembre");
+	}
 	
 	// Constructeur de la fenêtre principale (avec arguments)
 	public Fenetre(ContenuDufichierDeDonnees donnees)
 	{
+		// Initialisations des variables d'instance
 		this.donnees = donnees;
+		initialisationVariables();
 		
 		// Paramètres globaux de la fenêtre principale
 	    this.setExtendedState(JFrame.MAXIMIZED_BOTH);			// pour mettre l'application en plein écran 
 	    this.setUndecorated(true);								// pour enlever la barre du haut contenant les icônes réduire, agrandir et fermer (permet vraiment le passage en plein écran)
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-	    // Initialisation --- temporaire
-	    conteneurPartieCentrale = new PartieCentraleMois();
-	    
-	    // Récupération de la date actuelle
+//	    // Récupération de la date actuelle
 	    LocalDateTime dateActuelle = LocalDateTime.now();
 	    int mois = dateActuelle.getMonthValue();
+	    System.out.println(mois);
+	    System.out.println(dicoCorrespondanceDesMois.get(mois));
+	    recuperationDesDonnees(dicoCorrespondanceDesMois.get(mois));
+	    
+	    // Initialisation
+	    conteneurPartieCentrale = new PartieCentraleMois(donneesCredits, enTetesCredits, donneesDebits, enTetesDebits);
 	    
 	    // Ecoute des boutons du panneau latéral
 	    for (JButton element: conteneurPartieDroite.getListeDesBoutons())
@@ -76,7 +104,20 @@ public class Fenetre extends JFrame {
 		this.revalidate();						// en complément de repaint pour indiquer au layout manager de faire un reset sur la base des nouveaux composants
 	}
 	
-	// Définition des actions --- via des classes internes
+	// Récupération des données pour alimenter les tableaux de la partie centrale de l'application
+	private void recuperationDesDonnees(String moisSelectionne)
+	{
+		donnees.recuperationDonneesMoisSelectionne(moisSelectionne, "crédits");
+		donnees.recuperationDonneesMoisSelectionne(moisSelectionne, "débits");
+		
+		donneesCredits = donnees.getValeursCredits();
+		enTetesCredits = donnees.getListeDesEnTetesCredits();
+		
+		donneesDebits = donnees.getValeursDebits();
+		enTetesDebits = donnees.getListeDesEnTetesDebits();
+	}
+	
+	// Action pour quitter l'application (classe interne)
 	class actionQuitter extends AbstractAction
 	{
 		public void actionPerformed(ActionEvent actionEvent)
@@ -85,7 +126,7 @@ public class Fenetre extends JFrame {
 		}
 	}
 	
-	// Actions via des classes internes
+	// Actions suite au clic sur l'un des boutons (classe interne)
 	class RecupererIdentifiantBouton implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
@@ -101,21 +142,8 @@ public class Fenetre extends JFrame {
 			else
 			{
 				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
-				
-				if (donnees.getContenuFichierXMl().containsKey(nomDuBoutonUtilise))
-				{
-					Map<String, Hashtable> tut = donnees.getContenuFichierXMl().get(nomDuBoutonUtilise);
-					for (Map.Entry<String, Hashtable> iteu: tut.entrySet())
-					{
-						String a = iteu.getKey();
-						Map<String, String> b = iteu.getValue();
-						System.out.println(a);
-						System.out.println(b);
-					}
-				}
-				
-				conteneurPartieCentrale = new PartieCentraleMois();
-				
+				recuperationDesDonnees(nomDuBoutonUtilise);
+				conteneurPartieCentrale = new PartieCentraleMois(donneesCredits, enTetesCredits, donneesDebits, enTetesDebits);
 				Fenetre.this.actualiserAffichage();
 			}
 			

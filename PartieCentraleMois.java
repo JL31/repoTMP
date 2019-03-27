@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,19 +18,22 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 	private JScrollPane jspCredits, jspDebits;
 	private JTable tableauCredits, tableauDebits;
 	
+	// Accesseurs
+	public JPanel getConteneurGlobal()
+	{
+		return conteneurGlobal;
+	}
+	
 	// Constructeur sans arguments
 	public PartieCentraleMois()
 	{
 		// Initialisations
-//		Object[][] donnees = {{1, 11, 111}, {2, 22, 222}, {3, 33, 333}, {4, 44, 444}, {5, 55, 555}};
-		String[] enTetes = {"Premier", "Deuxième", "Troisième"};
+		String[] enTetes = {"", "", ""};
 		
-		DefaultTableModel model = new DefaultTableModel(5, enTetes.length);
+		DefaultTableModel model = new DefaultTableModel(0, enTetes.length);
 		model.setColumnIdentifiers(enTetes);
 		
 		// Création et configuration des tableaux des crédits et débits
-//		tableauCredits = new JTable(donnees, enTetes);
-//		tableauDebits = new JTable(donnees, enTetes);
 		tableauCredits = new JTable(model);
 		tableauDebits = new JTable(model);
 		
@@ -64,9 +68,43 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
 	
-	// Accesseurs
-	public JPanel getConteneurGlobal()
+	
+	// Constructeur avec arguments
+	public PartieCentraleMois(Object[][] donneesCredits, Object[] enTetesCredits, Object[][] donneesDebits, Object[] enTetesDebits)
 	{
-		return conteneurGlobal;
+		// Création et configuration des tableaux des crédits et débits
+		tableauCredits = new JTable(donneesCredits, enTetesCredits);
+		tableauDebits = new JTable(donneesDebits, enTetesDebits);
+		
+		tableauCredits.setBackground(new Color(198, 224, 180));
+		tableauDebits.setBackground(new Color(248, 203, 173));
+		
+		tableauCredits.setForeground(Color.black);
+		tableauDebits.setForeground(Color.black);
+		
+		tableauCredits.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);				// tester si ça fonctionne quand plus de données
+		
+		// Configuration des JScrollPane 
+		jspCredits = new JScrollPane(tableauCredits);
+		jspDebits = new JScrollPane(tableauDebits);
+		
+		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);	// permet d'afficher l'ascenseur en permanence
+		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		jspCredits.getViewport().setBackground(new Color(198, 224, 180));				// permet de colorier le reste du JScrollPane dans le cas où le tableau n'occupe pas tout l'espace
+		jspDebits.getViewport().setBackground(new Color(248, 203, 173));
+		
+		// Configuration du JSplitPane
+		separateur = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspCredits, jspDebits);
+		separateur.setResizeWeight(0.5);
+		separateur.setDividerSize(5);
+		separateur.setEnabled(false);
+		
+		// Configuration du conteneur global
+		conteneurGlobal.setBackground(Color.gray);
+		conteneurGlobal.setLayout(new BorderLayout());
+		conteneurGlobal.add(infoGene.getConteneurGlobal(), BorderLayout.NORTH);
+		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
+	
 }

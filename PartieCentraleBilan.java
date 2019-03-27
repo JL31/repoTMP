@@ -20,14 +20,12 @@ public class PartieCentraleBilan extends JFrame implements PartieCentrale
 	public PartieCentraleBilan()
 	{
 		// Initialisations
-//		Object[][] donnees = {{"a", "aa", "aaa"}, {"b", "bb", "bbb"}, {"c", "cc", "ccc"}};
-		String[] enTetes = {"Premier", "Deuxième", "Troisième"};
+		String[] enTetes = {"", "", ""};
 		
-		DefaultTableModel model = new DefaultTableModel(5, enTetes.length);
+		DefaultTableModel model = new DefaultTableModel(0, enTetes.length);
 		model.setColumnIdentifiers(enTetes);
 		
 		// Création et configuration des tableaux des crédits et débits
-//		tableauBilan = new JTable(donnees, enTetes);
 		tableauBilan = new JTable(model);
 		
 		tableauBilan.setBackground(Color.gray);

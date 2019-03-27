@@ -1,7 +1,5 @@
 import org.w3c.dom.*;
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +11,63 @@ public class ContenuDufichierDeDonnees {
 	private String dateDeMiseAJour;
 	private Map<String, Hashtable> contenuFichierXML = new Hashtable<String, Hashtable>();
 	
+	private List<String> listeDesEnTetesCredits = new ArrayList<String>();
+	private List<List<String>> listeDesDonneesCredits = new ArrayList<>();
+	
+	private List<String> listeDesEnTetesDebits = new ArrayList<String>();
+	private List<List<String>> listeDesDonneesDebits = new ArrayList<>();
+ 	
 	// Accesseurs
+ 
 	public Map<String, Hashtable> getContenuFichierXMl()
 	{
 		return contenuFichierXML;
 	}
 	
+	public Object[] getListeDesEnTetesCredits()
+	{
+		Object[] entetesCredits = listeDesEnTetesCredits.toArray();
+		return entetesCredits;
+	}
+	
+	public Object[][] getValeursCredits()
+	{
+		Object[][] donneesCredits = new Object[listeDesDonneesCredits.size()][];
+		
+		int i = 0;
+		
+		for (List<String> elem: listeDesDonneesCredits)
+		{
+//			donneesCredits[i++] = elem.toArray(new Object[elem.size()]);
+			donneesCredits[i++] = elem.toArray();
+		}
+		
+		return donneesCredits;
+	}
+	
+	public Object[] getListeDesEnTetesDebits()
+	{
+		Object[] entetesDebits = listeDesEnTetesDebits.toArray();
+		return entetesDebits;
+	}
+	
+	public Object[][] getValeursDebits()
+	{
+		Object[][] donneesDebits = new Object[listeDesDonneesDebits.size()][];
+		
+		int i = 0;
+		
+		for (List<String> elem: listeDesDonneesDebits)
+		{
+//			donneesDebits[i++] = elem.toArray(new Object[elem.size()]);
+			donneesDebits[i++] = elem.toArray();
+		}
+		
+		return donneesDebits;
+	}
+	
 	// Constructeur avec arguments
+	// Constructeur avec argument(s)
 	public ContenuDufichierDeDonnees(Document doc)
 	{
 		this.doc = doc;
@@ -41,6 +89,7 @@ public class ContenuDufichierDeDonnees {
 	}
 	
 	// Affichage du contenu du dico contenant les données du fichier XML
+	// Affichage du contenu du fichier chargé
 	public void affichageContenuFichierXML ()
 	{
 		for (Map.Entry<String, Hashtable> mp1: contenuFichierXML.entrySet())
@@ -65,115 +114,88 @@ public class ContenuDufichierDeDonnees {
 					{
 						String cle4 = mp4.getKey();
 						String valeur4 = mp4.getValue();
-						System.out.println("\t\t\t" + cle4);
-						System.out.println("\t\t\t" + valeur4);
+						System.out.println("\t\t\t" + cle4 + " --> " + valeur4);
 					}
 				}
 			}
 		}
 	}
 	
-	// 
-	public Map<String, Hashtable> recuperationDonneesMoisSelectionne(String moisSelectionne)
+	// Récupération des données de la sous-catégorie sélectionnée pour le mois sélectionné 
+	public void recuperationDonneesMoisSelectionne(String moisSelectionne, String sousCategorie)
 	{
-		// Déclaration des variables
-		Map<String, Hashtable> dicoDonnees = new Hashtable<String, Hashtable>(); 
+		// Initialisation des variables
+		if (sousCategorie.equals("crédits"))
+		{
+			listeDesEnTetesCredits = new ArrayList<String>();
+			listeDesDonneesCredits = new ArrayList<>();
+		}
+		else if (sousCategorie.equals("débits"))
+		{
+			listeDesEnTetesDebits = new ArrayList<String>();
+			listeDesDonneesDebits = new ArrayList<>();
+		}
 		
-		Hashtable dicoDonneesCredits = new Hashtable();
-		List<String> listeDesEnTetesCredits = new ArrayList<String>();
-		List<List<?>> valeursCredits = new ArrayList<>();
-		
-		Hashtable dicoDonneesDebits = new Hashtable();
-		List<String> listeDesEnTetesDebits = new ArrayList<String>();
-		List<List<?>> valeursDebits = new ArrayList<>();
-		
-//		Object[][] valeurs;
-		
-		// ...
+		// On vérifie si le mois sélectionné figure dans les données extraites
 		if (contenuFichierXML.containsKey(moisSelectionne))
 		{
 			Hashtable<String, Hashtable> dicoTmp = contenuFichierXML.get(moisSelectionne);
 			
-			if (dicoTmp.containsKey("crédits"))
+			// On vérifie, pour le mois sélectionné, si la sous-catégorie existe
+			if (dicoTmp.containsKey(sousCategorie))
 			{
-				Map<String, Hashtable> dicoTmp2 = dicoTmp.get("crédits");
+				Map<String, Hashtable> dicoTmp2 = dicoTmp.get(sousCategorie);
 				
-				for (Map.Entry<String, Hashtable> elem: dicoTmp2.entrySet())
+				// On itère sur les catégorie de la sous-catégorie
+				for (Map.Entry<String, Hashtable> categorie: dicoTmp2.entrySet())
 				{
-					String nomCategorie = elem.getKey();
-					listeDesEnTetesCredits.add(nomCategorie);
+					// Récupération du nom de la catégorie
+					String nomCategorie = categorie.getKey();
 					
-					Map<String, Hashtable> categories = elem.getValue();
+					// Récupération des valeurs associées à la sous-catégorie
+					Map<String, String> valeursDeLaCategorieCourante = categorie.getValue();
 					
-					for (Map.Entry<String, Hashtable> elem2: categories.entrySet())
+					// Récupération du montant et de la date de virement
+					Float montant = Float.valueOf(valeursDeLaCategorieCourante.get("montant"));
+					String dateVirement = valeursDeLaCategorieCourante.get("date_du_virement");
+					
+					// Remplissage de la liste temporaire avec les informations récupérées préalablement
+					List listeTmp = new ArrayList();
+					listeTmp.add(nomCategorie);
+					listeTmp.add(montant);
+					listeTmp.add(dateVirement);
+				
+					// Ajout de la liste temporaire aux données de la sous-catégorie
+					if (sousCategorie.equals("crédits"))
 					{
-						Map<String, String> valeursCategorie = elem2.getValue();
-						
-						Float montant = Float.valueOf(valeursCategorie.get("montant"));
-						String dateVirement = valeursCategorie.get("date_du_virement");
-						Boolean statut = Boolean.valueOf(valeursCategorie.get("statut"));
-						
-						List listeTmp = new ArrayList();
-						listeTmp.add(montant);
-						listeTmp.add(dateVirement);
-						listeTmp.add(statut);
-						
-						valeursCredits.add(listeTmp);
+						listeDesDonneesCredits.add(listeTmp);
 					}
+					else if (sousCategorie.equals("débits"))
+					{
+						listeDesDonneesDebits.add(listeTmp);
+					}
+					
 				}
 			}
-			else if (dicoTmp.containsKey("dédits"))
+			
+			// Ajout des en-têtes des colonnes à la liste adéquate
+			if (sousCategorie.equals("crédits"))
 			{
-				Map<String, Hashtable> dicoTmp2 = dicoTmp.get("dédits");
-				
-				for (Map.Entry<String, Hashtable> elem: dicoTmp2.entrySet())
-				{
-					String nomCategorie = elem.getKey();
-					listeDesEnTetesDebits.add(nomCategorie);
-					
-					Map<String, Hashtable> categories = elem.getValue();
-					
-					for (Map.Entry<String, Hashtable> elem2: categories.entrySet())
-					{
-						Map<String, String> valeursCategorie = elem2.getValue();
-						
-						Float montant = Float.valueOf(valeursCategorie.get("montant"));
-						String dateVirement = valeursCategorie.get("date_du_virement");
-						Boolean statut = Boolean.valueOf(valeursCategorie.get("statut"));
-						
-						List listeTmp = new ArrayList();
-						listeTmp.add(montant);
-						listeTmp.add(dateVirement);
-						listeTmp.add(statut);
-						
-						valeursDebits.add(listeTmp);
-					}
-				}
-			} 
-//			else
-//			{
-//				0
-//			}
+				listeDesEnTetesCredits.add("Catégorie");
+				listeDesEnTetesCredits.add("Montant (€)");
+				listeDesEnTetesCredits.add("Date du virement");
+			}
+			else if (sousCategorie.equals("débits"))
+			{
+				listeDesEnTetesDebits.add("Catégorie");
+				listeDesEnTetesDebits.add("Montant (€)");
+				listeDesEnTetesDebits.add("Date du virement");
+			}
+			
 		}
-//		// ...
-//		else
-//		{
-//			
-//		}
-		
-		// Retour de la méthode
-		dicoDonneesCredits.put("en-tetes", listeDesEnTetesCredits);
-		dicoDonneesCredits.put("donnees", valeursCredits);
-		
-		dicoDonneesDebits.put("en-tetes", listeDesEnTetesDebits);
-		dicoDonneesDebits.put("donnees", valeursDebits);
-		
-		dicoDonnees.put("crédits",  dicoDonneesCredits);
-		dicoDonnees.put("débits",  dicoDonneesDebits);
-		
-		return dicoDonnees;
 	}
 	
+	// Récupération du contenu du fichier XML
 	// Récupération du contenu du fichier XML
 	public Map recuperationDuContenu(NodeList liste)
 	{
