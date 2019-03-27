@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 public class PartieCentraleMois extends JFrame implements PartieCentrale
@@ -81,8 +82,16 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 	public PartieCentraleMois(Object[][] donneesCredits, Object[] enTetesCredits, Object[][] donneesDebits, Object[] enTetesDebits)
 	{
 		// Création et configuration des tableaux des crédits et débits
-		tableauCredits = new JTable(donneesCredits, enTetesCredits);
-		tableauDebits = new JTable(donneesDebits, enTetesDebits);
+		
+		// Test ---
+		ModelePerso modeleCredits = new ModelePerso(donneesCredits, enTetesCredits);
+		ModelePerso modeleDebits = new ModelePerso(donneesDebits, enTetesDebits);
+		tableauCredits = new JTable(modeleCredits);
+		tableauDebits = new JTable(modeleDebits);
+		// --- Test
+		
+//		tableauCredits = new JTable(donneesCredits, enTetesCredits);
+//		tableauDebits = new JTable(donneesDebits, enTetesDebits);
 		
 		tableauCredits.setBackground(new Color(198, 224, 180));
 		tableauDebits.setBackground(new Color(248, 203, 173));
@@ -117,4 +126,38 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
 	
+	// Test
+	class ModelePerso extends AbstractTableModel
+	{
+		private Object[][] data;
+		private Object[] titles;
+		
+		public ModelePerso(Object[][] data, Object[] titles)
+		{
+			this.data = data;
+			this.titles = titles;
+		}
+		
+		public int getColumnCount()
+		{
+			return titles.length;
+		}
+		
+		public int getRowCount()
+		{
+			return data.length;
+		}
+		
+		public Object getValueAt(int row, int col)
+		{
+			return data[row][col];
+		}
+		
+		public boolean isCellEditable(int row, int col)
+		{
+			if (col == 0)
+				return false;
+			return true;
+		}
+	}
 }

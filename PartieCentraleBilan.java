@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 public class PartieCentraleBilan extends JFrame implements PartieCentrale
@@ -58,9 +59,12 @@ public class PartieCentraleBilan extends JFrame implements PartieCentrale
 	// Constructeur avec arguments
 	public PartieCentraleBilan(Object[][] donneesBilan, Object[] enTetesBilan)
 	{
-		// Initialisations
 		// Création et configuration des tableaux des crédits et débits
-		tableauBilan = new JTable(donneesBilan, enTetesBilan);
+		// Test ---
+		ModelePerso modele = new ModelePerso(donneesBilan, enTetesBilan);
+		tableauBilan = new JTable(modele);
+		// --- Test
+//		tableauBilan = new JTable(donneesBilan, enTetesBilan);
 		
 		tableauBilan.setBackground(Color.gray);
 		tableauBilan.setForeground(Color.white);
@@ -78,4 +82,36 @@ public class PartieCentraleBilan extends JFrame implements PartieCentrale
 		conteneurGlobal.add(jspBilan, BorderLayout.CENTER);
 	}
 	
+	// Test
+	class ModelePerso extends AbstractTableModel
+	{
+		private Object[][] data;
+		private Object[] titles;
+		
+		public ModelePerso(Object[][] data, Object[] titles)
+		{
+			this.data = data;
+			this.titles = titles;
+		}
+		
+		public int getColumnCount()
+		{
+			return titles.length;
+		}
+		
+		public int getRowCount()
+		{
+			return data.length;
+		}
+		
+		public Object getValueAt(int row, int col)
+		{
+			return data[row][col];
+		}
+		
+		public boolean isCellEditable(int row, int col)
+		{
+			return false;
+		}
+	}
 }

@@ -20,7 +20,6 @@ public class ContenuDufichierDeDonnees
 	private Object[][] donneesBilan;
  	
 	// Accesseurs
- 
 	public Map<String, Hashtable> getContenuFichierXMl()
 	{
 		return contenuFichierXML;
@@ -175,10 +174,14 @@ public class ContenuDufichierDeDonnees
 					
 					// Si le dictionnaire contenant les sommes contient déjà la clé alors on récupère la valeur associée
 					if (dicoDesSommes.containsKey(cleCategorie))
+					{
 						montantCategorie = dicoDesSommes.get(cleCategorie);
+					}
 					// Sinon on initialise la valeur pour cette nouvelle clé 
 					else
+					{
 						montantCategorie = 0.0f;
+					}
 					
 					// Mise à jour de la somme du montant de la catégorie associée
 					montantCategorie += Float.valueOf(valeurCategorie.get("montant"));
@@ -195,6 +198,8 @@ public class ContenuDufichierDeDonnees
 	public void recuperationDonneesMoisSelectionne(String moisSelectionne, String sousCategorie)
 	{
 		// Initialisation des variables
+		String libelle = "";
+		
 		if (sousCategorie.equals("crédits"))
 		{
 			listeDesEnTetesCredits = new ArrayList<String>();
@@ -202,6 +207,7 @@ public class ContenuDufichierDeDonnees
 		}
 		else if (sousCategorie.equals("débits"))
 		{
+			
 			listeDesEnTetesDebits = new ArrayList<String>();
 			listeDesDonneesDebits = new ArrayList<>();
 		}
@@ -227,11 +233,20 @@ public class ContenuDufichierDeDonnees
 					
 					// Récupération du montant et de la date de virement
 					Float montant = Float.valueOf(valeursDeLaCategorieCourante.get("montant"));
+					if (sousCategorie.equals("débits"))
+					{
+						libelle = valeursDeLaCategorieCourante.get("libellé");
+					}
 					String dateVirement = valeursDeLaCategorieCourante.get("date_du_virement");
 					
 					// Remplissage de la liste temporaire avec les informations récupérées préalablement
 					List listeTmp = new ArrayList();
+					
 					listeTmp.add(nomCategorie);
+					if (sousCategorie.equals("débits"))
+					{
+						listeTmp.add(libelle);
+					}
 					listeTmp.add(montant);
 					listeTmp.add(dateVirement);
 				
@@ -258,6 +273,7 @@ public class ContenuDufichierDeDonnees
 			else if (sousCategorie.equals("débits"))
 			{
 				listeDesEnTetesDebits.add("Catégorie");
+				listeDesEnTetesDebits.add("Libellé");
 				listeDesEnTetesDebits.add("Montant (€)");
 				listeDesEnTetesDebits.add("Date du virement");
 			}
@@ -270,7 +286,7 @@ public class ContenuDufichierDeDonnees
 	{
 		// Déclaration des variables
 		String cleMois, cleCreditsDebits;
-		String nom, dateVirement, montant, statut;
+		String nom, libelle = "", dateVirement, montant, statut;
 		Map dicoDeRetour = new Hashtable<String, Hashtable>();
 		
 		// Itération sur laliste passée en argument 
@@ -329,6 +345,10 @@ public class ContenuDufichierDeDonnees
 							
 							// Récupération des valeurs de la catégorie courante
 							montant = elemCreditsDebits.getAttribute("montant");
+							if (cleCreditsDebits.equals("débits"))
+							{
+								libelle = elemCreditsDebits.getAttribute("libellé");
+							}
 							dateVirement = elemCreditsDebits.getAttribute("date_du_virement"); 
 							statut = elemCreditsDebits.getAttribute("statut");
 							
@@ -336,6 +356,10 @@ public class ContenuDufichierDeDonnees
 							Hashtable<String, String> dicoTmp3 = new Hashtable<String, String>();
 							
 							dicoTmp3.put("montant", montant);
+							if (cleCreditsDebits.equals("débits"))
+							{
+								dicoTmp3.put("libellé", libelle);
+							}
 							dicoTmp3.put("date_du_virement", dateVirement);
 							dicoTmp3.put("statut", statut);
 							
