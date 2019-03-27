@@ -4,24 +4,31 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class ContenuDufichierDeDonnees {
+public class ContenuDufichierDeDonnees
+{
 	
 	// Déclarations des variables d'instance
 	private Document doc;
 	private String dateDeMiseAJour;
 	private Map<String, Hashtable> contenuFichierXML = new Hashtable<String, Hashtable>();
-	
 	private List<String> listeDesEnTetesCredits = new ArrayList<String>();
 	private List<List<String>> listeDesDonneesCredits = new ArrayList<>();
-	
 	private List<String> listeDesEnTetesDebits = new ArrayList<String>();
 	private List<List<String>> listeDesDonneesDebits = new ArrayList<>();
+	private Hashtable<String, Float> dicoDesSommes = new Hashtable<String, Float>();
+	private Object[] listeDesEntetesBilan = {"Catégories", "Somme (en €)"};
+	private Object[][] donneesBilan;
  	
 	// Accesseurs
  
 	public Map<String, Hashtable> getContenuFichierXMl()
 	{
 		return contenuFichierXML;
+	}
+	
+	public String getDateDeMiseAJour()
+	{
+		return dateDeMiseAJour;
 	}
 	
 	public Object[] getListeDesEnTetesCredits()
@@ -66,7 +73,29 @@ public class ContenuDufichierDeDonnees {
 		return donneesDebits;
 	}
 	
-	// Constructeur avec arguments
+	public Object[] getListeDesEntetesBilan()
+	{
+		return listeDesEntetesBilan;
+	}
+	
+	public Object[][] getDonneesBilan()
+	{
+		donneesBilan = new Object[dicoDesSommes.size()][];
+		
+		int j = 0;
+		
+		for (Map.Entry<String, Float> nbr: dicoDesSommes.entrySet())
+		{
+			List<String> tut = new ArrayList<String>();
+			tut.add(nbr.getKey());
+			tut.add(String.valueOf(nbr.getValue()));
+			
+			donneesBilan[j++] = tut.toArray();
+		}
+			
+		return donneesBilan;
+	}
+	
 	// Constructeur avec argument(s)
 	public ContenuDufichierDeDonnees(Document doc)
 	{
@@ -88,7 +117,6 @@ public class ContenuDufichierDeDonnees {
 		}
 	}
 	
-	// Affichage du contenu du dico contenant les données du fichier XML
 	// Affichage du contenu du fichier chargé
 	public void affichageContenuFichierXML ()
 	{
@@ -119,6 +147,48 @@ public class ContenuDufichierDeDonnees {
 				}
 			}
 		}
+	}
+	
+	// Calcul des sommes pour chacunes des catégories
+	public void calculDesSommes()
+	{
+		// Initialisation du dictionnaire contenant les sommes
+		dicoDesSommes = new Hashtable<String, Float>();
+		
+		for (Map.Entry<String, Hashtable> mois: contenuFichierXML.entrySet())
+		{
+			String cleMois = mois.getKey();
+			Map<String, Hashtable> valeurMois = mois.getValue();
+			
+			for (Map.Entry<String, Hashtable> sousCategorie: valeurMois.entrySet())
+			{
+				String cleSousCategorie = sousCategorie.getKey();
+				Map<String, Hashtable> valeurSousCategorie = sousCategorie.getValue();
+				
+				for (Map.Entry<String, Hashtable> categorie: valeurSousCategorie.entrySet())
+				{
+					String cleCategorie = categorie.getKey();
+					Map<String, String> valeurCategorie = categorie.getValue();
+					
+					// Initialisation
+					Float montantCategorie; 
+					
+					// Si le dictionnaire contenant les sommes contient déjà la clé alors on récupère la valeur associée
+					if (dicoDesSommes.containsKey(cleCategorie))
+						montantCategorie = dicoDesSommes.get(cleCategorie);
+					// Sinon on initialise la valeur pour cette nouvelle clé 
+					else
+						montantCategorie = 0.0f;
+					
+					// Mise à jour de la somme du montant de la catégorie associée
+					montantCategorie += Float.valueOf(valeurCategorie.get("montant"));
+					
+					// Mise à jour de la donnée dans le dictionnaire contenant les sommes
+					dicoDesSommes.put(cleCategorie, montantCategorie);
+				}
+			}
+		}
+		
 	}
 	
 	// Récupération des données de la sous-catégorie sélectionnée pour le mois sélectionné 
@@ -195,7 +265,6 @@ public class ContenuDufichierDeDonnees {
 		}
 	}
 	
-	// Récupération du contenu du fichier XML
 	// Récupération du contenu du fichier XML
 	public Map recuperationDuContenu(NodeList liste)
 	{

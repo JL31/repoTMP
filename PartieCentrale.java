@@ -4,4 +4,5 @@ public interface PartieCentrale
 {
 	// Méthode d'initialisation
 	public JPanel getConteneurGlobal();
+	public BandeauInformations getInformationsGenerales();
 }

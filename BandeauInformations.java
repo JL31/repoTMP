@@ -14,6 +14,23 @@ public class BandeauInformations
 	private JLabel labelfichierCharge = new JLabel();
 	private JLabel labelDateMAJ = new JLabel();
 	
+	// Accesseur
+	public JPanel getConteneurGlobal()
+	{
+		return conteneurGlobal;
+	}
+	
+	// Mutateurs
+	public void setLabelfichierCharge(String texte)
+	{
+		labelfichierCharge.setText(texte);
+	}
+	
+	public void setLabelDateMAJ(String texte)
+	{
+		labelDateMAJ.setText(texte);
+	}
+	
 	// Constructeur sans arguments
 	public BandeauInformations()
 	{
@@ -39,9 +56,4 @@ public class BandeauInformations
 		conteneurGlobal.add(labelDateMAJ);
 	}
 	
-	// Accesseur
-	public JPanel getConteneurGlobal()
-	{
-		return conteneurGlobal;
-	}
 }

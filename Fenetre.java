@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -15,8 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-
-public class Fenetre extends JFrame {
+public class Fenetre extends JFrame
+{
 	
 	// Déclaration des variables d'instance
 	private JPanel conteneurGlobal = new JPanel();
@@ -29,6 +27,8 @@ public class Fenetre extends JFrame {
 	private Object[] enTetesCredits;
 	private Object[][] donneesDebits;
 	private Object[] enTetesDebits;
+	private Object[][] donneesBilan;
+	private Object[] enTetesBilan; 
 	
 	// Initialisation de certaines variables d'instance
 	private void initialisationVariables()
@@ -48,7 +48,7 @@ public class Fenetre extends JFrame {
 	}
 	
 	// Constructeur de la fenêtre principale (avec arguments)
-	public Fenetre(ContenuDufichierDeDonnees donnees)
+	public Fenetre(ContenuDufichierDeDonnees donnees, String nomDuFichierACharger)
 	{
 		// Initialisations des variables d'instance
 		this.donnees = donnees;
@@ -62,12 +62,12 @@ public class Fenetre extends JFrame {
 //	    // Récupération de la date actuelle
 	    LocalDateTime dateActuelle = LocalDateTime.now();
 	    int mois = dateActuelle.getMonthValue();
-	    System.out.println(mois);
-	    System.out.println(dicoCorrespondanceDesMois.get(mois));
 	    recuperationDesDonnees(dicoCorrespondanceDesMois.get(mois));
 	    
 	    // Initialisation
 	    conteneurPartieCentrale = new PartieCentraleMois(donneesCredits, enTetesCredits, donneesDebits, enTetesDebits);
+	    conteneurPartieCentrale.getInformationsGenerales().setLabelfichierCharge(nomDuFichierACharger);
+	    conteneurPartieCentrale.getInformationsGenerales().setLabelDateMAJ(donnees.getDateDeMiseAJour());
 	    
 	    // Ecoute des boutons du panneau latéral
 	    for (JButton element: conteneurPartieDroite.getListeDesBoutons())
@@ -104,7 +104,7 @@ public class Fenetre extends JFrame {
 		this.revalidate();						// en complément de repaint pour indiquer au layout manager de faire un reset sur la base des nouveaux composants
 	}
 	
-	// Récupération des données pour alimenter les tableaux de la partie centrale de l'application
+	// Récupération des données pour alimenter les tableaux des mois de la partie centrale de l'application
 	private void recuperationDesDonnees(String moisSelectionne)
 	{
 		donnees.recuperationDonneesMoisSelectionne(moisSelectionne, "crédits");
@@ -115,6 +115,15 @@ public class Fenetre extends JFrame {
 		
 		donneesDebits = donnees.getValeursDebits();
 		enTetesDebits = donnees.getListeDesEnTetesDebits();
+	}
+	
+	// Récupération des données pour alimenter le tableau de bilan de la partie centrale de l'application
+	private void recuperationDesDonnesBilan()
+	{
+		donnees.calculDesSommes();
+		
+		donneesBilan = donnees.getDonneesBilan() ;
+		enTetesBilan = donnees.getListeDesEntetesBilan();
 	}
 	
 	// Action pour quitter l'application (classe interne)
@@ -136,7 +145,8 @@ public class Fenetre extends JFrame {
 			if (nomDuBoutonUtilise.equals("Bilan"))
 			{
 				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
-				conteneurPartieCentrale = new PartieCentraleBilan();
+				recuperationDesDonnesBilan();
+				conteneurPartieCentrale = new PartieCentraleBilan(donneesBilan, enTetesBilan);
 				Fenetre.this.actualiserAffichage();
 			}
 			else

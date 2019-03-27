@@ -9,11 +9,12 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class PartieCentraleMois extends JFrame implements PartieCentrale {
+public class PartieCentraleMois extends JFrame implements PartieCentrale
+{
 	
 	// Déclaration des variables d'instance
 	private JPanel conteneurGlobal = new JPanel();
-	private BandeauInformations infoGene = new BandeauInformations(); 
+	private BandeauInformations informationsGenerales = new BandeauInformations(); 
 	private JSplitPane separateur = new JSplitPane();
 	private JScrollPane jspCredits, jspDebits;
 	private JTable tableauCredits, tableauDebits;
@@ -22,6 +23,11 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 	public JPanel getConteneurGlobal()
 	{
 		return conteneurGlobal;
+	}
+	
+	public BandeauInformations getInformationsGenerales()
+	{
+		return informationsGenerales;
 	}
 	
 	// Constructeur sans arguments
@@ -49,8 +55,10 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 		jspCredits = new JScrollPane(tableauCredits);
 		jspDebits = new JScrollPane(tableauDebits);
 		
-		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);	// permet d'afficher l'ascenseur en permanence
-		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		// permet d'afficher l'ascenseur en permanence
+//		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		// permet d'afficher l'ascenseur en permanence
+		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);	// permet d'afficher l'ascenseur si besoin
+		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);		// permet d'afficher l'ascenseur si besoin
 		
 		jspCredits.getViewport().setBackground(new Color(198, 224, 180));				// permet de colorier le reste du JScrollPane dans le cas où le tableau n'occupe pas tout l'espace
 		jspDebits.getViewport().setBackground(new Color(248, 203, 173));
@@ -64,7 +72,7 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 		// Configuration du conteneur global
 		conteneurGlobal.setBackground(Color.gray);
 		conteneurGlobal.setLayout(new BorderLayout());
-		conteneurGlobal.add(infoGene.getConteneurGlobal(), BorderLayout.NORTH);
+		conteneurGlobal.add(informationsGenerales.getConteneurGlobal(), BorderLayout.NORTH);
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
 	
@@ -88,8 +96,10 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 		jspCredits = new JScrollPane(tableauCredits);
 		jspDebits = new JScrollPane(tableauDebits);
 		
-		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);	// permet d'afficher l'ascenseur en permanence
-		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		// permet d'afficher l'ascenseur en permanence
+//		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		// permet d'afficher l'ascenseur en permanence
+		jspCredits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);	// permet d'afficher l'ascenseur si besoin
+		jspDebits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);		// permet d'afficher l'ascenseur si besoin
 		
 		jspCredits.getViewport().setBackground(new Color(198, 224, 180));				// permet de colorier le reste du JScrollPane dans le cas où le tableau n'occupe pas tout l'espace
 		jspDebits.getViewport().setBackground(new Color(248, 203, 173));
@@ -103,7 +113,7 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale {
 		// Configuration du conteneur global
 		conteneurGlobal.setBackground(Color.gray);
 		conteneurGlobal.setLayout(new BorderLayout());
-		conteneurGlobal.add(infoGene.getConteneurGlobal(), BorderLayout.NORTH);
+		conteneurGlobal.add(informationsGenerales.getConteneurGlobal(), BorderLayout.NORTH);
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
 	
