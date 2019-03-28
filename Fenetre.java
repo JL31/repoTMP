@@ -10,6 +10,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -24,6 +25,7 @@ public class Fenetre extends JFrame
 	private ContenuDufichierDeDonnees donnees;
 	private Hashtable<Integer, String> dicoCorrespondanceDesMois = new Hashtable<Integer, String>();
 	private String nomDuFichierACharger;
+	private JOptionPane jop1 = new JOptionPane();
 	
 	// Initialisation de certaines variables d'instance
 	private void initialisationVariables()
@@ -82,6 +84,11 @@ public class Fenetre extends JFrame
 	    this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(combinaisonTouchesQuitter, "Quitter");
 	    this.getRootPane().getActionMap().put("Quitter", new actionQuitter());
 	    
+	    // Ajout d'un raccourci clavier pour l'enregistrement
+	    KeyStroke combinaisonTouchesEnregistrer = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+	    this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(combinaisonTouchesEnregistrer, "Enregistrer");
+	    this.getRootPane().getActionMap().put("Enregistrer", new actionEnregistrer());
+	    
 	    // Définition du content pane de la fenêtre principale
 	    this.setContentPane(conteneurGlobal);
 	    
@@ -113,6 +120,15 @@ public class Fenetre extends JFrame
 		public void actionPerformed(ActionEvent actionEvent)
 		{
 			System.exit(0);
+		}
+	}
+	
+	class actionEnregistrer extends AbstractAction
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			donnees.enregistrementDesDonnees();
+			jop1.showMessageDialog(null, "Données enregistrées", "Enregistrement", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	

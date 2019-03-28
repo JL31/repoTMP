@@ -26,7 +26,7 @@ public class LectureDuFichierDeDonnees
 		
 		try
 		{
-			// Création de l'objet FIle du fichier XML à importer
+			// Création de l'objet File du fichier XML à importer
 			File fichier = new File(this.nomDuFichierDeDonnees);
 			
 			// Création des éléments de lecture du fichier XML : factory, builder
@@ -37,8 +37,7 @@ public class LectureDuFichierDeDonnees
 			Document doc = builder.parse(fichier);
 			
 			// Création de l'objet qui va contenir le contenu du fichier de données
-			contenuDuFichierDeDonnees = new ContenuDufichierDeDonnees(doc);
-//			contenuDuFichierDeDonnees.affichageContenuFichierXML();
+			contenuDuFichierDeDonnees = new ContenuDufichierDeDonnees(doc, fichier);
 		}
 		catch (ParserConfigurationException e)
 		{

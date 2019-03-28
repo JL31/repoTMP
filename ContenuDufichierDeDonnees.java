@@ -1,12 +1,25 @@
 import org.w3c.dom.*;
+
+import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 public class ContenuDufichierDeDonnees
 {
-	
 	// Déclarations des variables d'instance
 	private Document doc;
 	private String dateDeMiseAJour;
@@ -22,6 +35,7 @@ public class ContenuDufichierDeDonnees
 	private Object[][] donneesCredits;
 	private Object[] entetesDebits;
 	private Object[][] donneesDebits;
+	private File fichier;
  	
 	// Accesseurs
 	public Hashtable<String, Hashtable> getContenuFichierXMl()
@@ -65,9 +79,11 @@ public class ContenuDufichierDeDonnees
 	}
 	
 	// Constructeur avec argument(s)
-	public ContenuDufichierDeDonnees(Document doc)
+	public ContenuDufichierDeDonnees(Document doc, File fichier)
 	{
+		// Initialisation de variables d'instance
 		this.doc = doc;
+		this.fichier = fichier;
 		
 		// Récupération de l'élément racine du fichier XML
 		Element root = this.doc.getDocumentElement();
@@ -114,6 +130,158 @@ public class ContenuDufichierDeDonnees
 					}
 				}
 			}
+		}
+	}
+	
+	// Récupération de la date du jour au format jj/mm/aaaa
+	public String dateDuJour()
+	{
+		// Déclaration des variables
+		int jour, mois, annee;
+		String jourStr = "", moisStr = "", dateDEnregistrement = "";
+		
+		// Récupération de la date actuelle
+		LocalDateTime dateActuelle = LocalDateTime.now();
+	    
+		// Récupération, dans la date actuelle, des jour, mois et annee sous forme d'entier
+		jour = dateActuelle.getDayOfMonth();
+		mois = dateActuelle.getMonthValue();
+		annee = dateActuelle.getYear();
+		
+		// Si le numéro du jour est inférieur à 10 alors on ajoute un zéro devant
+	    if (jour < 10)
+	    {
+	    	jourStr = "0" + String.valueOf(jour);
+	    }
+	    else
+	    {
+	    	jourStr = String.valueOf(jour);
+	    }
+	    
+	    // Si le numéro du mois est inférieur à 10 alors on ajoute un zéro devant
+	    if (mois < 10)
+	    {
+	    	moisStr = "0" + String.valueOf(mois);
+	    }
+	    else
+	    {
+	    	moisStr = String.valueOf(mois);
+	    }
+	    
+	    // Création de la date au format jj/mm/aaaa
+	    dateDEnregistrement =  jourStr + "/" + moisStr + "/" + String.valueOf(annee);
+	    
+	    // Retour de la méthode
+	    return dateDEnregistrement;
+	}
+	
+	// Enregistrement des résultats
+	public void enregistrementDesDonnees()
+	{
+		try
+		{
+			// Création des éléments de lecture du fichier XML : factory, builder
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+			// Création d'un nouveau document
+			Document doc = builder.newDocument();
+			
+			// Création et ajout au document créé de l'élément racine 
+			Element elementRacine = doc.createElement("donnees");
+			doc.appendChild(elementRacine);
+			
+			// Création et ajout, à l'élément racine, de l'élément MAJ
+			Element elementMaj = doc.createElement("MAJ");
+			elementRacine.appendChild(elementMaj);
+			elementMaj.appendChild(doc.createTextNode(dateDuJour()));
+			
+			// Création du contenu du fichier à écrire, 
+			// Itération sur les mois
+			for(Map.Entry<String, Hashtable> mois: contenuFichierXML.entrySet())
+			{
+				// Création et ajout, à l'élément racine, de l'élément du mois courant
+				Element elementMoisCourant = doc.createElement("mois");
+				elementRacine.appendChild(elementMoisCourant);
+				elementMoisCourant.setAttribute("nom", mois.getKey());
+				
+				// Récupération des sous-catégories du mois courant
+				Hashtable<String, Hashtable> sousCategories = mois.getValue();
+				
+				// Itération sur les sous-catégories du mois courant
+				for(Map.Entry<String, Hashtable> sousCat: sousCategories.entrySet())
+				{
+					// Création et ajout, à l'élément du mois courant, de l'élément de la sous-catégorie courante
+					Element elementSousCategorie = doc.createElement(sousCat.getKey());
+					elementMoisCourant.appendChild(elementSousCategorie);
+					
+					// Récupération des catégories de la sous-catégorie courante
+					Hashtable<String, Hashtable> categorie = sousCat.getValue();
+					
+					// Itération sur les catégories de la sous-catégories courante
+					for(Map.Entry<String, Hashtable> cat: categorie.entrySet())
+					{
+						// Création et ajout, à l'élément de la sous-catégorie courante, de la catégorie courante
+						Element elementCategorie = doc.createElement("catégorie");
+						elementSousCategorie.appendChild(elementCategorie);
+						
+						// Ajout, à l'élément de la sous-catégorie courante, du nom de la catégorie
+						elementCategorie.setAttribute("nom", cat.getKey());
+						
+						// Récupération des catégories de la sous-catégorie courante
+						Hashtable<String, String> attributsCategorieCourante = cat.getValue(); 
+						
+						// Itération sur les attributs de la catégories courante
+						for(Map.Entry<String, String> attribut: attributsCategorieCourante.entrySet())
+						{
+							elementCategorie.setAttribute(attribut.getKey(), attribut.getValue());
+						}
+					}
+				}
+			}
+			
+			// Création du fichier avec le contenu définit précédemment
+			try
+			{
+				// Création des éléments d'écriture du fichier XML : TransformerFactory et Transformer
+				TransformerFactory transformerfactory = TransformerFactory.newInstance(); 
+				Transformer transformer = transformerfactory.newTransformer();
+				
+				// Création d'un objet DOMSource alimenté par l'objet Document créé
+				DOMSource objectDOMSource = new DOMSource(doc);
+				
+				// Options d'écriture
+				StreamResult objetStreamResult = new StreamResult(this.fichier);	// permet d'écrire le résultat dans un fichier XML 	
+//				StreamResult objetStreamResult = new StreamResult(System.out);		// permet d'écrire le résultat dans la console
+				
+				transformer.setOutputProperty(OutputKeys.VERSION, "1.0");		// spécifie la version
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");	// spécifie l'encodage
+				transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");	// spécifie le mode standalone
+				
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");							// écriture/affichage sur plusieurs lignes
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");	// identation de 4 caractères par niveau de balilse
+				
+				// Action d'écriture
+				// (dans un fichier ou dans la console, selon l'option choisie)
+				try
+				{
+					transformer.transform(objectDOMSource, objetStreamResult);
+				}
+				catch (TransformerException e)
+				{
+					e.printStackTrace();
+				}
+				
+			}
+			catch (TransformerConfigurationException e)
+			{
+				e.printStackTrace();
+			}
+			
+		}
+		catch (ParserConfigurationException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	
