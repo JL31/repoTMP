@@ -10,7 +10,7 @@ public class ContenuDufichierDeDonnees
 	// Déclarations des variables d'instance
 	private Document doc;
 	private String dateDeMiseAJour;
-	private Map<String, Hashtable> contenuFichierXML = new Hashtable<String, Hashtable>();
+	private Hashtable<String, Hashtable> contenuFichierXML = new Hashtable<String, Hashtable>();
 	private List<String> listeDesEnTetesCredits = new ArrayList<String>();
 	private List<List<String>> listeDesDonneesCredits = new ArrayList<>();
 	private List<String> listeDesEnTetesDebits = new ArrayList<String>();
@@ -18,9 +18,13 @@ public class ContenuDufichierDeDonnees
 	private Hashtable<String, Float> dicoDesSommes = new Hashtable<String, Float>();
 	private Object[] listeDesEntetesBilan = {"Catégories", "Somme (en €)"};
 	private Object[][] donneesBilan;
+	private Object[] entetesCredits;
+	private Object[][] donneesCredits;
+	private Object[] entetesDebits;
+	private Object[][] donneesDebits;
  	
 	// Accesseurs
-	public Map<String, Hashtable> getContenuFichierXMl()
+	public Hashtable<String, Hashtable> getContenuFichierXMl()
 	{
 		return contenuFichierXML;
 	}
@@ -32,43 +36,21 @@ public class ContenuDufichierDeDonnees
 	
 	public Object[] getListeDesEnTetesCredits()
 	{
-		Object[] entetesCredits = listeDesEnTetesCredits.toArray();
 		return entetesCredits;
 	}
 	
 	public Object[][] getValeursCredits()
 	{
-		Object[][] donneesCredits = new Object[listeDesDonneesCredits.size()][];
-		
-		int i = 0;
-		
-		for (List<String> elem: listeDesDonneesCredits)
-		{
-//			donneesCredits[i++] = elem.toArray(new Object[elem.size()]);
-			donneesCredits[i++] = elem.toArray();
-		}
-		
 		return donneesCredits;
 	}
 	
 	public Object[] getListeDesEnTetesDebits()
 	{
-		Object[] entetesDebits = listeDesEnTetesDebits.toArray();
 		return entetesDebits;
 	}
 	
 	public Object[][] getValeursDebits()
 	{
-		Object[][] donneesDebits = new Object[listeDesDonneesDebits.size()][];
-		
-		int i = 0;
-		
-		for (List<String> elem: listeDesDonneesDebits)
-		{
-//			donneesDebits[i++] = elem.toArray(new Object[elem.size()]);
-			donneesDebits[i++] = elem.toArray();
-		}
-		
 		return donneesDebits;
 	}
 	
@@ -79,20 +61,7 @@ public class ContenuDufichierDeDonnees
 	
 	public Object[][] getDonneesBilan()
 	{
-		donneesBilan = new Object[dicoDesSommes.size()][];
-		
-		int j = 0;
-		
-		for (Map.Entry<String, Float> nbr: dicoDesSommes.entrySet())
-		{
-			List<String> tut = new ArrayList<String>();
-			tut.add(nbr.getKey());
-			tut.add(String.valueOf(nbr.getValue()));
-			
-			donneesBilan[j++] = tut.toArray();
-		}
-			
-		return donneesBilan;
+		return donneesBilan; 
 	}
 	
 	// Constructeur avec argument(s)
@@ -116,25 +85,25 @@ public class ContenuDufichierDeDonnees
 		}
 	}
 	
-	// Affichage du contenu du fichier chargé
+	// Affichage du contenu du fichier chargé 
 	public void affichageContenuFichierXML ()
 	{
 		for (Map.Entry<String, Hashtable> mp1: contenuFichierXML.entrySet())
 		{
 			String cle1 = mp1.getKey();
-			Map<String, Hashtable> valeur1 = mp1.getValue();
+			Hashtable<String, Hashtable> valeur1 = mp1.getValue();
 			System.out.println(cle1);
 			
 			for (Map.Entry<String, Hashtable> mp2: valeur1.entrySet())
 			{
 				String cle2 = mp2.getKey();
-				Map<String, Hashtable> valeur2 = mp2.getValue();
+				Hashtable<String, Hashtable> valeur2 = mp2.getValue();
 				System.out.println("\t" + cle2);
 				
 				for (Map.Entry<String, Hashtable> mp3: valeur2.entrySet())
 				{
 					String cle3 = mp3.getKey();
-					Map<String, String> valeur3 = mp3.getValue();
+					Hashtable<String, String> valeur3 = mp3.getValue();
 					System.out.println("\t\t" + cle3);
 					
 					for (Map.Entry<String, String> mp4: valeur3.entrySet())
@@ -148,6 +117,31 @@ public class ContenuDufichierDeDonnees
 		}
 	}
 	
+	// Modification d'une données dans le contenu du fichier XML (suite à l'édition d'une cellule par exemple)
+	public void modifierElementContenuFichierXML(String mois, String sousCategorie, String categorie, String attribut, String valeur)
+	{
+		Hashtable sousCat = (Hashtable) contenuFichierXML.get(mois).get(sousCategorie);
+		Hashtable cat = (Hashtable) sousCat.get(categorie);
+		cat.put(attribut, valeur);
+	}
+	
+	// Transformation des données du bilan en Object[][]
+	public void transformeDonneesBilan()
+	{
+		donneesBilan = new Object[dicoDesSommes.size()][];
+		
+		int j = 0;
+		
+		for (Map.Entry<String, Float> nbr: dicoDesSommes.entrySet())
+		{
+			List<String> tut = new ArrayList<String>();
+			tut.add(nbr.getKey());
+			tut.add(String.valueOf(nbr.getValue()));
+			
+			donneesBilan[j++] = tut.toArray();
+		}
+	}
+	
 	// Calcul des sommes pour chacunes des catégories
 	public void calculDesSommes()
 	{
@@ -157,17 +151,17 @@ public class ContenuDufichierDeDonnees
 		for (Map.Entry<String, Hashtable> mois: contenuFichierXML.entrySet())
 		{
 			String cleMois = mois.getKey();
-			Map<String, Hashtable> valeurMois = mois.getValue();
+			Hashtable<String, Hashtable> valeurMois = mois.getValue();
 			
 			for (Map.Entry<String, Hashtable> sousCategorie: valeurMois.entrySet())
 			{
 				String cleSousCategorie = sousCategorie.getKey();
-				Map<String, Hashtable> valeurSousCategorie = sousCategorie.getValue();
+				Hashtable<String, Hashtable> valeurSousCategorie = sousCategorie.getValue();
 				
 				for (Map.Entry<String, Hashtable> categorie: valeurSousCategorie.entrySet())
 				{
 					String cleCategorie = categorie.getKey();
-					Map<String, String> valeurCategorie = categorie.getValue();
+					Hashtable<String, String> valeurCategorie = categorie.getValue();
 					
 					// Initialisation
 					Float montantCategorie; 
@@ -192,9 +186,51 @@ public class ContenuDufichierDeDonnees
 			}
 		}
 		
+		transformeDonneesBilan();
 	}
 	
-	// Récupération des données de la sous-catégorie sélectionnée pour le mois sélectionné 
+	// Transformation des en-têtes de la partie crédits en Object[] 
+	public void transformListeDesEnTetesCredits()
+	{
+		entetesCredits = listeDesEnTetesCredits.toArray();
+	}
+	
+	// Transformation des données de la partie crédits en Object[][]
+	public void transformValeursCredits()
+	{
+		donneesCredits = new Object[listeDesDonneesCredits.size()][];
+		
+		int i = 0;
+		
+		for (List<String> elem: listeDesDonneesCredits)
+		{
+//			donneesCredits[i++] = elem.toArray(new Object[elem.size()]);
+			donneesCredits[i++] = elem.toArray();
+		}
+		
+	}
+	
+	// Transformation des en-têtes de la partie débits en Object[]
+	public void transformListeDesEnTetesDebits()
+	{
+		entetesDebits = listeDesEnTetesDebits.toArray();
+	}
+	
+	// Transformation des données de la partie débits en Object[][]
+	public void transformValeursDebits()
+	{
+		donneesDebits = new Object[listeDesDonneesDebits.size()][];
+		
+		int i = 0;
+		
+		for (List<String> elem: listeDesDonneesDebits)
+		{
+//			donneesDebits[i++] = elem.toArray(new Object[elem.size()]);
+			donneesDebits[i++] = elem.toArray();
+		}
+	}
+	
+	// Récupérationn des données du mois sélectionné pour la sous-catégorie spécifiée
 	public void recuperationDonneesMoisSelectionne(String moisSelectionne, String sousCategorie)
 	{
 		// Initialisation des variables
@@ -220,7 +256,7 @@ public class ContenuDufichierDeDonnees
 			// On vérifie, pour le mois sélectionné, si la sous-catégorie existe
 			if (dicoTmp.containsKey(sousCategorie))
 			{
-				Map<String, Hashtable> dicoTmp2 = dicoTmp.get(sousCategorie);
+				Hashtable<String, Hashtable> dicoTmp2 = dicoTmp.get(sousCategorie);
 				
 				// On itère sur les catégorie de la sous-catégorie
 				for (Map.Entry<String, Hashtable> categorie: dicoTmp2.entrySet())
@@ -229,7 +265,7 @@ public class ContenuDufichierDeDonnees
 					String nomCategorie = categorie.getKey();
 					
 					// Récupération des valeurs associées à la sous-catégorie
-					Map<String, String> valeursDeLaCategorieCourante = categorie.getValue();
+					Hashtable<String, String> valeursDeLaCategorieCourante = categorie.getValue();
 					
 					// Récupération du montant et de la date de virement
 					Float montant = Float.valueOf(valeursDeLaCategorieCourante.get("montant"));
@@ -279,15 +315,26 @@ public class ContenuDufichierDeDonnees
 			}
 			
 		}
+		
+		if (sousCategorie.equals("crédits"))
+		{
+			transformListeDesEnTetesCredits();
+			transformValeursCredits();
+		}
+		else if (sousCategorie.equals("débits"))
+		{
+			transformListeDesEnTetesDebits();
+			transformValeursDebits();
+		}
 	}
 	
 	// Récupération du contenu du fichier XML
-	public Map recuperationDuContenu(NodeList liste)
+	public Hashtable<String, Hashtable> recuperationDuContenu(NodeList liste)
 	{
 		// Déclaration des variables
 		String cleMois, cleCreditsDebits;
 		String nom, libelle = "", dateVirement, montant, statut;
-		Map dicoDeRetour = new Hashtable<String, Hashtable>();
+		Hashtable<String, Hashtable> dicoDeRetour = new Hashtable<String, Hashtable>();
 		
 		// Itération sur laliste passée en argument 
 		for (int i = 0; i < liste.getLength(); i++)
@@ -310,7 +357,7 @@ public class ContenuDufichierDeDonnees
 				if (listeDesSousCategories.getLength() > 0)
 				{
 					// Alimentation du dictionnaire de retour
-					Map dicoTmp1 = recuperationDuContenu(listeDesSousCategories);
+					Hashtable<String, Hashtable> dicoTmp1 = recuperationDuContenu(listeDesSousCategories);
 					dicoDeRetour.put(cleMois, dicoTmp1);
 				}
 			}

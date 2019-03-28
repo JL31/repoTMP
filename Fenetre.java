@@ -23,12 +23,7 @@ public class Fenetre extends JFrame
 	private String nomDuBoutonUtilise;
 	private ContenuDufichierDeDonnees donnees;
 	private Hashtable<Integer, String> dicoCorrespondanceDesMois = new Hashtable<Integer, String>();
-	private Object[][] donneesCredits;
-	private Object[] enTetesCredits;
-	private Object[][] donneesDebits;
-	private Object[] enTetesDebits;
-	private Object[][] donneesBilan;
-	private Object[] enTetesBilan; 
+	private String nomDuFichierACharger;
 	
 	// Initialisation de certaines variables d'instance
 	private void initialisationVariables()
@@ -52,6 +47,7 @@ public class Fenetre extends JFrame
 	{
 		// Initialisations des variables d'instance
 		this.donnees = donnees;
+		this.nomDuFichierACharger = nomDuFichierACharger;
 		initialisationVariables();
 		
 		// Paramètres globaux de la fenêtre principale
@@ -59,15 +55,14 @@ public class Fenetre extends JFrame
 	    this.setUndecorated(true);								// pour enlever la barre du haut contenant les icônes réduire, agrandir et fermer (permet vraiment le passage en plein écran)
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-//	    // Récupération de la date actuelle
+	    // Récupération de la date actuelle
 	    LocalDateTime dateActuelle = LocalDateTime.now();
 	    int mois = dateActuelle.getMonthValue();
-	    recuperationDesDonnees(dicoCorrespondanceDesMois.get(mois));
+	    String moisStr = dicoCorrespondanceDesMois.get(mois);
 	    
-	    // Initialisation
-	    conteneurPartieCentrale = new PartieCentraleMois(donneesCredits, enTetesCredits, donneesDebits, enTetesDebits);
-	    conteneurPartieCentrale.getInformationsGenerales().setLabelfichierCharge(nomDuFichierACharger);
-	    conteneurPartieCentrale.getInformationsGenerales().setLabelDateMAJ(donnees.getDateDeMiseAJour());
+	    // Initialisations
+	    conteneurPartieCentrale = new PartieCentraleMois(donnees, moisStr);
+	    remplissageBandeauInformation();
 	    
 	    // Ecoute des boutons du panneau latéral
 	    for (JButton element: conteneurPartieDroite.getListeDesBoutons())
@@ -93,7 +88,14 @@ public class Fenetre extends JFrame
 	    // Affichage de la fenêtre
 	    this.setVisible(true); 
 	}
-
+	
+	// Méthode qui permet de remplir les JLabel du bandeau d'informations générales
+	public void remplissageBandeauInformation()
+	{
+		conteneurPartieCentrale.getInformationsGenerales().setLabelfichierCharge(nomDuFichierACharger);
+	    conteneurPartieCentrale.getInformationsGenerales().setLabelDateMAJ(donnees.getDateDeMiseAJour());
+	}
+	
 	// Mise-à-jour de l'affichage
 	public void actualiserAffichage()
 	{
@@ -102,28 +104,7 @@ public class Fenetre extends JFrame
 		this.setContentPane(conteneurGlobal);	// mise-à-jour du content pane de la fenêtre principale
 		this.repaint();							// re-dessine la fenêtre
 		this.revalidate();						// en complément de repaint pour indiquer au layout manager de faire un reset sur la base des nouveaux composants
-	}
-	
-	// Récupération des données pour alimenter les tableaux des mois de la partie centrale de l'application
-	private void recuperationDesDonnees(String moisSelectionne)
-	{
-		donnees.recuperationDonneesMoisSelectionne(moisSelectionne, "crédits");
-		donnees.recuperationDonneesMoisSelectionne(moisSelectionne, "débits");
-		
-		donneesCredits = donnees.getValeursCredits();
-		enTetesCredits = donnees.getListeDesEnTetesCredits();
-		
-		donneesDebits = donnees.getValeursDebits();
-		enTetesDebits = donnees.getListeDesEnTetesDebits();
-	}
-	
-	// Récupération des données pour alimenter le tableau de bilan de la partie centrale de l'application
-	private void recuperationDesDonnesBilan()
-	{
-		donnees.calculDesSommes();
-		
-		donneesBilan = donnees.getDonneesBilan() ;
-		enTetesBilan = donnees.getListeDesEntetesBilan();
+		remplissageBandeauInformation();
 	}
 	
 	// Action pour quitter l'application (classe interne)
@@ -145,15 +126,13 @@ public class Fenetre extends JFrame
 			if (nomDuBoutonUtilise.equals("Bilan"))
 			{
 				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
-				recuperationDesDonnesBilan();
-				conteneurPartieCentrale = new PartieCentraleBilan(donneesBilan, enTetesBilan);
+				conteneurPartieCentrale = new PartieCentraleBilan(donnees);
 				Fenetre.this.actualiserAffichage();
 			}
 			else
 			{
 				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
-				recuperationDesDonnees(nomDuBoutonUtilise);
-				conteneurPartieCentrale = new PartieCentraleMois(donneesCredits, enTetesCredits, donneesDebits, enTetesDebits);
+				conteneurPartieCentrale = new PartieCentraleMois(donnees, nomDuBoutonUtilise);
 				Fenetre.this.actualiserAffichage();
 			}
 			

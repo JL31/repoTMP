@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -7,8 +8,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class PartieCentraleMois extends JFrame implements PartieCentrale
 {
@@ -77,21 +81,18 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
 	
-	
 	// Constructeur avec arguments
-	public PartieCentraleMois(Object[][] donneesCredits, Object[] enTetesCredits, Object[][] donneesDebits, Object[] enTetesDebits)
+	public PartieCentraleMois(ContenuDufichierDeDonnees donnees, String moisStr)
 	{
 		// Création et configuration des tableaux des crédits et débits
+		ModelePersonnaliseMois modeleCredits = new ModelePersonnaliseMois(donnees, moisStr, "crédits");
+		ModelePersonnaliseMois modeleDebits = new ModelePersonnaliseMois(donnees, moisStr, "débits");
 		
-		// Test ---
-		ModelePerso modeleCredits = new ModelePerso(donneesCredits, enTetesCredits);
-		ModelePerso modeleDebits = new ModelePerso(donneesDebits, enTetesDebits);
+		modeleCredits.addTableModelListener(modeleCredits);
+		modeleDebits.addTableModelListener(modeleDebits);
+		
 		tableauCredits = new JTable(modeleCredits);
 		tableauDebits = new JTable(modeleDebits);
-		// --- Test
-		
-//		tableauCredits = new JTable(donneesCredits, enTetesCredits);
-//		tableauDebits = new JTable(donneesDebits, enTetesDebits);
 		
 		tableauCredits.setBackground(new Color(198, 224, 180));
 		tableauDebits.setBackground(new Color(248, 203, 173));
@@ -126,37 +127,141 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
 	}
 	
-	// Test
-	class ModelePerso extends AbstractTableModel
+	// Définition du modèle personnalisé pour les mois
+	class ModelePersonnaliseMois extends AbstractTableModel implements TableModelListener
 	{
+		// Déclaration de variables d'instance
 		private Object[][] data;
 		private Object[] titles;
+		ContenuDufichierDeDonnees donnees;
+		String moisStr;
+		String sousCategorie;
 		
-		public ModelePerso(Object[][] data, Object[] titles)
+		// Constructeur avec arguments
+		public ModelePersonnaliseMois(ContenuDufichierDeDonnees donnees, String moisStr, String sousCategorie)
 		{
-			this.data = data;
-			this.titles = titles;
+			// Initialisation de variables d'instance
+			this.donnees = donnees;
+			this.moisStr = moisStr;
+			this.sousCategorie = sousCategorie;
+			
+			// Initialisation selon la valeur de la sous-catégorie
+			if (sousCategorie.equals("crédits"))
+			{
+				donnees.recuperationDonneesMoisSelectionne(moisStr, "crédits");
+				data = donnees.getValeursCredits();
+				titles = donnees.getListeDesEnTetesCredits();
+			}
+			else if (sousCategorie.equals("débits"))
+			{
+				donnees.recuperationDonneesMoisSelectionne(moisStr, "débits");
+				data = donnees.getValeursDebits();
+				titles = donnees.getListeDesEnTetesDebits();
+			}
 		}
 		
+		// Récupération du nombre de colonnes
 		public int getColumnCount()
 		{
 			return titles.length;
 		}
 		
+		// Récupération du nombre de lignes
 		public int getRowCount()
 		{
 			return data.length;
 		}
 		
+		// Affichage des noms des colonnes
+		public String getColumnName(int col)
+		{
+			  return String.valueOf(titles[col]);
+		}
+		
+		// Récupération d'une valeur à une ligne et une colonne donnée 
 		public Object getValueAt(int row, int col)
 		{
 			return data[row][col];
 		}
 		
+		// Modification de la valeur à une ligne et une colonne donnée
+		public void setValueAt(Object value, int row, int col)
+		{
+			data[row][col] = value;
+			fireTableCellUpdated(row, col);
+		}
+		
+		// Récupération du type d'attribut pour les données de la sous-catégorie crédits
+		public String typeAttributDonneeCredits(int col)
+		{
+			String retour = "";
+			
+			if (col == 1)
+			{
+				retour = "montant";
+			}
+			else if (col == 2)
+			{
+				retour = "date_du_virement";
+			}
+			
+			return retour;
+		}
+		
+		// Récupération du type d'attribut pour les données de la sous-catégorie débits
+		public String typeAttributDonneesDebits(int col)
+		{
+			String retour = "";
+			
+			if (col == 1)
+			{
+				retour = "libellé";
+			}
+			else if (col == 2)
+			{
+				retour = "montant";
+			}
+			else if (col == 3)
+			{
+				retour = "date_du_virement";
+			}
+			
+			return retour;
+		}
+		
+		// Modification d'une donnée de l'objet ContenuDufichierDeDonnees
+		public void tableChanged(TableModelEvent e)
+		{
+			// Déclaration de variables
+			String attribut = "";
+			
+			// Initialisation de variables
+			int row = e.getFirstRow();
+			int col = e.getColumn();
+			String valeur = String.valueOf(data[row][col]);
+			String nomCat = String.valueOf(data[row][0]);
+			
+			// Récupération du type d'attribut pour les données selon la sous-catégorie
+			if (sousCategorie.equals("crédits"))
+			{
+				attribut = typeAttributDonneeCredits(col);
+			}
+			else if (sousCategorie.equals("débits"))
+			{
+				attribut = typeAttributDonneesDebits(col);
+			}
+			
+			// Modification de la donnée dans l'objet ContenuDufichierDeDonnees
+			donnees.modifierElementContenuFichierXML(moisStr, sousCategorie, nomCat, attribut, valeur);
+		}
+		
+		// Gestion de la propriété d'édition des cellules du tableau
 		public boolean isCellEditable(int row, int col)
 		{
 			if (col == 0)
+			{
 				return false;
+			}
 			return true;
 		}
 	}
