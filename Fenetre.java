@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.Hashtable;
 
@@ -10,8 +12,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
 public class Fenetre extends JFrame
@@ -123,6 +127,7 @@ public class Fenetre extends JFrame
 		}
 	}
 	
+	// Action pour enregistrer les données
 	class actionEnregistrer extends AbstractAction
 	{
 		public void actionPerformed(ActionEvent e)

@@ -1,10 +1,17 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -23,6 +30,11 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 	private JSplitPane separateur = new JSplitPane();
 	private JScrollPane jspCredits, jspDebits;
 	private JTable tableauCredits, tableauDebits;
+	// Test ---
+	private ContenuDufichierDeDonnees donnees;
+	private JPopupMenu jpm = new JPopupMenu();
+	private JMenuItem nouveauDebits = new JMenuItem("Nouveaux débits");
+	// --- Test
 	
 	// Accesseurs
 	public JPanel getConteneurGlobal()
@@ -79,11 +91,18 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 		conteneurGlobal.setLayout(new BorderLayout());
 		conteneurGlobal.add(informationsGenerales.getConteneurGlobal(), BorderLayout.NORTH);
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
+		
+		// Création du menu contextuel
+	    conteneurGlobal.addMouseListener(new menuContextuelPersonnalise());
+	    nouveauDebits.addActionListener(new actionNouveauDebit());
 	}
 	
 	// Constructeur avec arguments
 	public PartieCentraleMois(ContenuDufichierDeDonnees donnees, String moisStr)
 	{
+		// Initialisation de variables d'instance
+		this.donnees = donnees;
+		
 		// Création et configuration des tableaux des crédits et débits
 		ModelePersonnaliseMois modeleCredits = new ModelePersonnaliseMois(donnees, moisStr, "crédits");
 		ModelePersonnaliseMois modeleDebits = new ModelePersonnaliseMois(donnees, moisStr, "débits");
@@ -125,5 +144,33 @@ public class PartieCentraleMois extends JFrame implements PartieCentrale
 		conteneurGlobal.setLayout(new BorderLayout());
 		conteneurGlobal.add(informationsGenerales.getConteneurGlobal(), BorderLayout.NORTH);
 		conteneurGlobal.add(separateur, BorderLayout.CENTER);
+		
+		// Création du menu contextuel
+		jspDebits.addMouseListener(new menuContextuelPersonnalise());
+	    nouveauDebits.addActionListener(new actionNouveauDebit());
+	}
+	
+	// Classe interne qui gère le menu contextuel (implémente la classe MouseAdapter)
+	class menuContextuelPersonnalise extends MouseAdapter
+	{
+		public void mouseReleased(MouseEvent e)
+		{
+			if (e.isPopupTrigger())
+			{
+				jpm.add(nouveauDebits);
+				jpm.show(jspDebits, e.getX(), e.getY());
+			}
+		}
+	}
+	
+	// Action pour ajouter une nouvelle entrée dans les débits
+	class actionNouveauDebit implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			BoiteDeDialoguePersonnalise bddp = new BoiteDeDialoguePersonnalise(null, "Nouveau débit", true, donnees);
+//			JOptionPane tut = new JOptionPane();
+//			tut.showMessageDialog(null, "tut", "Information", JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 }

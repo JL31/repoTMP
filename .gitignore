@@ -23,3 +23,7 @@
 /ModelePersonnaliseBilan.class
 /Fenetre$actionEnregistrer.class
 /EnvoiMail.class
+/Fenetre$menuContextuelPersonnalise.class
+/PartieCentraleMois$menuContextuelPersonnalise.class
+/PartieCentraleMois$actionNouveauDebit.class
+/BoiteDeDialoguePersonnalise.class

@@ -14,7 +14,7 @@ public class EnvoiMail
 	private MimeMessage message;
 	private Transport transport;
 	
-	// Constructeur .... argument(s)
+	// Constructeur sans argument(s)
 	public EnvoiMail()
 	{
 		// 1ère étape : création d'une session

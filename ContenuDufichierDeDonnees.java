@@ -36,6 +36,7 @@ public class ContenuDufichierDeDonnees
 	private Object[] entetesDebits;
 	private Object[][] donneesDebits;
 	private File fichier;
+	private List<String> listeDesCategories;
  	
 	// Accesseurs
 	public Hashtable<String, Hashtable> getContenuFichierXMl()
@@ -76,6 +77,21 @@ public class ContenuDufichierDeDonnees
 	public Object[][] getDonneesBilan()
 	{
 		return donneesBilan; 
+	}
+	
+	public List<String> getListeDesCategories()
+	{
+		// Initialisation
+		listeDesCategories = new ArrayList<String>();
+		
+		// Alimentation de la liste des catégories
+		for (Object[] x: donneesDebits)
+		{
+			listeDesCategories.add(x[0].toString());
+		}
+		
+		// Retour de la liste des catégories
+		return listeDesCategories;
 	}
 	
 	// Constructeur avec argument(s)
