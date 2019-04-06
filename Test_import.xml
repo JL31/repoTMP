@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<export>
+    <mois nom="Janvier">
+        <crédits>
+            <catégorie date_du_virement="10/02/2019" montant="15.0" nom="A" statut="true"/>
+            <catégorie date_du_virement="10/04/2019" montant="35.0" nom="C" statut="true"/>
+            <catégorie date_du_virement="10/03/2019" montant="25.0" nom="D" statut="true"/>
+        </crédits>
+    </mois>
+    <mois nom="Mars">
+        <débits>
+            <catégorie date_du_virement="10/08/2019" libellé="raison 4" montant="-157.0" nom="A" statut="true"/>
+            <catégorie date_du_virement="10/10/2019" libellé="raison 6" montant="-557.0" nom="C" statut="true"/>
+            <catégorie date_du_virement="10/09/2019" libellé="raison 5" montant="-357.0" nom="B" statut="true"/>
+        </débits>
+    </mois>
+    <mois nom="Avril">
+    	<crédits>
+            <catégorie date_du_virement="20/02/2019" montant="1.0" nom="A" statut="true"/>
+            <catégorie date_du_virement="20/04/2019" montant="3.0" nom="C" statut="true"/>
+            <catégorie date_du_virement="20/03/2019" montant="2.0" nom="D" statut="true"/>
+        </crédits>
+    </mois>
+</export>

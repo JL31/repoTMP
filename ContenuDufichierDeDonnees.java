@@ -83,16 +83,20 @@ public class ContenuDufichierDeDonnees
 	{
 		// Initialisation
 		listeDesCategories = new ArrayList<String>();
-		
+		System.out.println("1");
 		// Alimentation de la liste des catégories
 		for (Object[] x: donneesDebits)
 		{
+			System.out.println(x[0].toString());
 			listeDesCategories.add(x[0].toString());
 		}
-		
+		System.out.println("2");
 		// Retour de la liste des catégories
 		return listeDesCategories;
 	}
+	
+	// Constructeur sans argumet(s)
+	public ContenuDufichierDeDonnees() {}
 	
 	// Constructeur avec argument(s)
 	public ContenuDufichierDeDonnees(Document doc, File fichier)
@@ -148,6 +152,199 @@ public class ContenuDufichierDeDonnees
 			}
 		}
 	}
+	
+//	// Import d'un fichier et mise-à-jour des données
+//	// Le fichier contient des données générées par l'application de mes comptes
+//	// La structure est légèrement différente de celle du fichier qui contient les données
+//	public void importDonnees()
+//	{
+//		// Init
+//		ContenuDufichierDeDonnees tmp = new ContenuDufichierDeDonnees();
+//		
+//		// Partie 1 : lecture du fichier de données
+//		try
+//		{
+//			// Création de l'objet File du fichier XML à importer
+//			File fichierImport = new File("Test_import.xml");
+//			
+//			// Création des éléments de lecture du fichier XML : factory, builder
+//			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//			DocumentBuilder builder = factory.newDocumentBuilder();
+//			
+//			// Parsing du fichier XML
+//			Document docImport = builder.parse(fichierImport);
+//			
+//			// Récupération de l'élément racine du fichier XML
+//			Element rootImport = docImport.getDocumentElement();
+//			
+//			// Vérification du noeud racine : si c'est "export" alors on continue
+//			if (rootImport.getNodeName().equals("export"))
+//			{
+//				// Récupération de la liste des noeuds du fichier XML
+//				NodeList listeDesNoeuds = rootImport.getChildNodes();
+//				
+//				// Si la liste des noeuds n'est pas vide on fait appel à la méthode récursive de remplissage du dictionnaire qui va contenir le contenu du fichier XML 
+//				if (listeDesNoeuds.getLength() > 0)
+//				{
+//					tmp.contenuFichierXML = recuperationDuContenu(listeDesNoeuds);
+//				}
+//			}
+//			// Sinon on informe l'utilisateur
+//			else
+//			{
+//				JOptionPane information = new JOptionPane();
+//				String message = "Le fichier " + fichierImport + " ne contient pas d'élément 'export'."
+//							   + "\nVeuillez vérifier son contenu.";
+//				information.showMessageDialog(null, message, "Element inexistant dans le fichier en cours d'importation", JOptionPane.INFORMATION_MESSAGE);
+//			}
+//		}
+//		catch (ParserConfigurationException e)
+//		{
+//			e.printStackTrace();
+//		}
+//		catch (SAXException e)
+//		{
+//			e.printStackTrace();
+//		}
+//		catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}
+//		
+////			// Affichage du contenu
+//		tmp.affichageContenuFichierXML();
+//		System.out.println();
+//		
+//		// Partie 2 : ajout des données 
+//		for (Map.Entry<String, Hashtable> mois: tmp.contenuFichierXML.entrySet())
+//		{
+//			String cleMois = mois.getKey();
+//			
+//			// Si le mois en cours existe on vérifie, pour chaque catégorie, que les données n'ont pas déjà été importées
+//			if (this.contenuFichierXML.containsKey(cleMois))
+//			{
+////					System.out.println(cleMois + " existe");
+//				
+//				Hashtable<String, Hashtable> contenuMois = mois.getValue();
+//				
+//				for (Map.Entry<String, Hashtable> sousCategorie: contenuMois.entrySet())
+//				{
+//					System.out.println("2");
+//					String cleSousCategorie = sousCategorie.getKey();
+//					Hashtable<String, Hashtable> contenuSousCategorie = sousCategorie.getValue();
+//					
+//					for (Map.Entry<String, Hashtable> categorie: contenuSousCategorie.entrySet())
+//					{
+//						System.out.println("3");
+//						
+//						String cleCategorie = categorie.getKey();
+//						System.out.println(cleCategorie);
+//						
+//						// La catégorie à importer existe déjà
+//						if (((Hashtable) this.contenuFichierXML.get(cleMois).get(cleSousCategorie)).containsKey(cleCategorie))
+//						{
+//							System.out.println("làààààà");
+//						
+//							Hashtable<String, String> contenuCategorie = categorie.getValue();
+//							
+//							// Récup dans données existantes
+//							String montantEnCours = (String) ((Hashtable) ((Hashtable) this.contenuFichierXML.get(cleMois).get(cleSousCategorie)).get(cleCategorie)).get("montant");
+//							String dateDeVirementEnCours = (String) ((Hashtable) ((Hashtable) this.contenuFichierXML.get(cleMois).get(cleSousCategorie)).get(cleCategorie)).get("date_du_virement");
+//							String libelleEnCours = "";
+//							
+//							System.out.println("3.1");
+//						
+//							if (cleSousCategorie.equals("débits"))
+//							{
+//								libelleEnCours = (String) ((Hashtable) ((Hashtable) this.contenuFichierXML.get(cleMois).get(cleSousCategorie)).get(cleCategorie)).get("libellé");
+//							}
+//							
+//							// Récup new donnees
+//							String montantAInserer = (String) ((Hashtable) ((Hashtable) tmp.contenuFichierXML.get(cleMois).get(cleSousCategorie)).get(cleCategorie)).get("montant");
+//							String dateDeVirementAInserer = (String) ((Hashtable) ((Hashtable) tmp.contenuFichierXML.get(cleMois).get(cleSousCategorie)).get(cleCategorie)).get("date_du_virement");
+//							String libelleAInserer = "";
+//							
+//							if (cleSousCategorie.equals("débits"))
+//							{
+//								libelleAInserer = (String) ((Hashtable) ((Hashtable) tmp.contenuFichierXML.get(cleMois).get(cleSousCategorie)).get(cleCategorie)).get("libellé");
+//							}
+//								
+//							// Test
+//							if (cleSousCategorie.equals("débits"))
+//							{
+//								if (!montantAInserer.equals(montantEnCours) && !dateDeVirementAInserer.equals(dateDeVirementEnCours) && !libelleAInserer.equals(libelleEnCours))
+//								{
+//									System.out.println(montantAInserer + "--" + dateDeVirementAInserer + "--" + libelleAInserer);
+//									System.out.println(montantEnCours + "--" + dateDeVirementEnCours + "--" + libelleEnCours);
+//									System.out.println("yeah débits !");
+//	//								this.modifierElementContenuFichierXML(cleMois, cleSousCategorie, cleCategorie, attribut, valeur);
+//								}
+//								else
+//								{
+//									System.out.println("Cette entrée existe déjà, elle ne sera donc pas ajoutée");
+//								}
+//							}
+//							else
+//							{
+//								if (!montantAInserer.equals(montantEnCours) && !dateDeVirementAInserer.equals(dateDeVirementEnCours))
+//								{
+//									System.out.println(montantAInserer + "--" + dateDeVirementAInserer);
+//									System.out.println(montantEnCours + "--" + dateDeVirementEnCours);
+//									System.out.println("yeah crédits !");
+//	//								this.modifierElementContenuFichierXML(cleMois, cleSousCategorie, cleCategorie, attribut, valeur);
+//								}
+//								else
+//								{
+//									System.out.println("Cette entrée existe déjà, elle ne sera donc pas ajoutée");
+//								}
+//							}
+//						}
+//						// La catégorie à importer n'existe pas
+//						else
+//						{
+//							System.out.println("hé bé non -_-");
+//						}
+//					}
+//				}
+//				
+//			}
+//			// Sinon on ajoute les données directement
+//			else
+//			{
+//				System.out.println(cleMois + " n'existe pas");
+//				
+////					System.out.println("1");
+//////					tmp.affichageContenuFichierXML();
+////					
+////					Hashtable<String, Hashtable> contenuMois = mois.getValue();
+////					
+////					for (Map.Entry<String, Hashtable> sousCategorie: contenuMois.entrySet())
+////					{
+////						System.out.println("2");
+////						String cleSousCategorie = sousCategorie.getKey();
+////						Hashtable<String, Hashtable> contenuSousCategorie = sousCategorie.getValue();
+////						
+////						for (Map.Entry<String, Hashtable> categorie: contenuSousCategorie.entrySet())
+////						{
+////							System.out.println("3");
+////							String cleCategorie = categorie.getKey();
+////							Hashtable<String, String> contenuCategorie = categorie.getValue();
+////							
+////							for (Map.Entry<String, String> attributDeLaCategorie: contenuCategorie.entrySet())
+////							{
+////								System.out.println("4");
+////								String attribut = attributDeLaCategorie.getKey();
+////								String valeur = attributDeLaCategorie.getValue();
+////								System.out.println(cleMois + "-" + cleSousCategorie + "-" + cleCategorie + "-" + attribut + "-" + valeur);
+////								this.modifierElementContenuFichierXML(cleMois, cleSousCategorie, cleCategorie, attribut, valeur);							
+////							}
+////						}
+////					}
+//			}
+//		}
+//		
+//		this.affichageContenuFichierXML();
+//	}
 	
 	// Récupération de la date du jour au format jj/mm/aaaa
 	public String dateDuJour()

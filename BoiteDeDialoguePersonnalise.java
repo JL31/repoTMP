@@ -1,6 +1,10 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,6 +21,10 @@ public class BoiteDeDialoguePersonnalise extends JDialog
 	private ContenuDufichierDeDonnees donnees;
 	private JPanel conteneurGlobal = new JPanel();
 	private JButton boutonAjout = new JButton("Ajouter le nouveau débit");
+	private JComboBox listeDesCategories = new JComboBox();
+	private JTextField tfLibelle = new JTextField();
+	private JTextField tfMontant = new JTextField();
+	private JTextField tfDateDuVirement = new JTextField();
 	
 	// Constructeur avec arguments
 	public BoiteDeDialoguePersonnalise(JFrame parent, String title, boolean modal, ContenuDufichierDeDonnees donnees)
@@ -50,8 +58,8 @@ public class BoiteDeDialoguePersonnalise extends JDialog
 		// Catégorie
 		JPanel panneauCategorie = new JPanel();
 		panneauCategorie.setPreferredSize(new Dimension(120, 40));
-		JComboBox listeDesCategories = new JComboBox();
 		listeDesCategories.setPreferredSize(new Dimension(80, 25));
+		System.out.println(donnees.getListeDesCategories());
 		for (String categorie: donnees.getListeDesCategories())
 		{
 			listeDesCategories.addItem(categorie);
@@ -62,7 +70,7 @@ public class BoiteDeDialoguePersonnalise extends JDialog
 		// Libellé
 		JPanel panneauLibelle = new JPanel();
 		panneauLibelle.setPreferredSize(new Dimension(120, 40));
-		JTextField tfLibelle = new JTextField();
+		tfLibelle.addKeyListener(new suiviSaisieComposants());
 		tfLibelle.setPreferredSize(new Dimension(80, 25));
 		panneauLibelle.setBorder(BorderFactory.createTitledBorder("Libellé"));
 		panneauLibelle.add(tfLibelle);
@@ -70,7 +78,7 @@ public class BoiteDeDialoguePersonnalise extends JDialog
 		// Montant
 		JPanel panneauMontant = new JPanel();
 		panneauMontant.setPreferredSize(new Dimension(120, 40));
-		JTextField tfMontant = new JTextField();
+		tfMontant.addKeyListener(new suiviSaisieComposants());
 		tfMontant.setPreferredSize(new Dimension(80, 25));
 		panneauMontant.setBorder(BorderFactory.createTitledBorder("Montant"));
 		panneauMontant.add(tfMontant);
@@ -78,7 +86,7 @@ public class BoiteDeDialoguePersonnalise extends JDialog
 		// Date du virement
 		JPanel panneauDateDuVirement = new JPanel();
 		panneauDateDuVirement.setPreferredSize(new Dimension(120, 40));
-		JTextField tfDateDuVirement = new JTextField();
+		tfDateDuVirement.addKeyListener(new suiviSaisieComposants());
 		tfDateDuVirement.setPreferredSize(new Dimension(80, 25));
 		panneauDateDuVirement.setBorder(BorderFactory.createTitledBorder("Date du virement"));
 		panneauDateDuVirement.add(tfDateDuVirement);
@@ -97,6 +105,38 @@ public class BoiteDeDialoguePersonnalise extends JDialog
 		conteneurGlobal.add(boutonAjout, BorderLayout.SOUTH);
 		
 		this.setContentPane(conteneurGlobal);
+	}
+	
+	// Classe KeyListener pour vérifier les saisies faites dans les composants de la boîte de dialogue
+	class suiviSaisieComposants implements KeyListener
+	{
+		public void keyPressed (KeyEvent e) {}
+		public void keyTyped (KeyEvent e) {}
+		public void keyReleased (KeyEvent e)
+		{
+//			String choixCategorie = listeDesCategories.getSelectedItem();
+			System.out.println(listeDesCategories.getSelectedItem());
+			String txtLibelle = tfLibelle.getText();
+			String txtMontant = tfMontant.getText();
+			
+			if (!txtLibelle.equals("") && !txtMontant.equals(""))
+			{
+				boutonAjout.setEnabled(true);
+			}
+			else
+			{
+				boutonAjout.setEnabled(false);
+			}
+		}
+	}
+	
+	// Action associée au bouton d'ajout
+	class actionAjout implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			System.out.println("Gagné !");
+		}
 	}
 	
 }

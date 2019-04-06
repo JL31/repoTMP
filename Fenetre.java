@@ -93,6 +93,11 @@ public class Fenetre extends JFrame
 	    this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(combinaisonTouchesEnregistrer, "Enregistrer");
 	    this.getRootPane().getActionMap().put("Enregistrer", new actionEnregistrer());
 	    
+	    // Ajout d'un raccourci clavier pour l'import d'un fichier
+	    KeyStroke combinaisonTouchesImporter = KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK);
+	    this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(combinaisonTouchesImporter, "Importer");
+	    this.getRootPane().getActionMap().put("Importer", new actionImport());
+	    
 	    // Définition du content pane de la fenêtre principale
 	    this.setContentPane(conteneurGlobal);
 	    
@@ -124,6 +129,15 @@ public class Fenetre extends JFrame
 		public void actionPerformed(ActionEvent actionEvent)
 		{
 			System.exit(0);
+		}
+	}
+	
+	// Action temporaire d'import d'un fichier
+	class actionImport extends AbstractAction
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+//			donnees.importDonnees();
 		}
 	}
 	
