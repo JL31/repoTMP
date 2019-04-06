@@ -30,6 +30,7 @@ public class Fenetre extends JFrame
 	private Hashtable<Integer, String> dicoCorrespondanceDesMois = new Hashtable<Integer, String>();
 	private String nomDuFichierACharger;
 	private JOptionPane jop1 = new JOptionPane();
+	private String affichageActuel = "";
 	
 	// Initialisation de certaines variables d'instance
 	private void initialisationVariables()
@@ -57,17 +58,17 @@ public class Fenetre extends JFrame
 		initialisationVariables();
 		
 		// Paramètres globaux de la fenêtre principale
-	    this.setExtendedState(JFrame.MAXIMIZED_BOTH);			// pour mettre l'application en plein écran 
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);			// pour mettre l'application en plein écran
 	    this.setUndecorated(true);								// pour enlever la barre du haut contenant les icônes réduire, agrandir et fermer (permet vraiment le passage en plein écran)
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
 	    // Récupération de la date actuelle
 	    LocalDateTime dateActuelle = LocalDateTime.now();
 	    int mois = dateActuelle.getMonthValue();
-	    String moisStr = dicoCorrespondanceDesMois.get(mois);
+	    affichageActuel = dicoCorrespondanceDesMois.get(mois);
 	    
 	    // Initialisations
-	    conteneurPartieCentrale = new PartieCentraleMois(donnees, moisStr);
+	    conteneurPartieCentrale = new PartieCentraleMois(donnees, affichageActuel);
 	    remplissageBandeauInformation();
 	    
 	    // Ecoute des boutons du panneau latéral
@@ -102,27 +103,38 @@ public class Fenetre extends JFrame
 	    this.setContentPane(conteneurGlobal);
 	    
 	    // Affichage de la fenêtre
-	    this.setVisible(true); 
+	    this.setVisible(true);
 	}
-	
+
 	// Méthode qui permet de remplir les JLabel du bandeau d'informations générales
 	public void remplissageBandeauInformation()
 	{
 		conteneurPartieCentrale.getInformationsGenerales().setLabelfichierCharge(nomDuFichierACharger);
 	    conteneurPartieCentrale.getInformationsGenerales().setLabelDateMAJ(donnees.getDateDeMiseAJour());
 	}
-	
+
 	// Mise-à-jour de l'affichage
 	public void actualiserAffichage()
 	{
+		if (affichageActuel.equals("Bilan"))
+		{
+			conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
+			conteneurPartieCentrale = new PartieCentraleBilan(donnees);
+		}
+		else
+		{
+			conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
+			conteneurPartieCentrale = new PartieCentraleMois(donnees, affichageActuel);
+		}
+
 		conteneurGlobal.add(conteneurPartieCentrale.getConteneurGlobal(), BorderLayout.CENTER);
-		
+
 		this.setContentPane(conteneurGlobal);	// mise-à-jour du content pane de la fenêtre principale
 		this.repaint();							// re-dessine la fenêtre
 		this.revalidate();						// en complément de repaint pour indiquer au layout manager de faire un reset sur la base des nouveaux composants
 		remplissageBandeauInformation();
 	}
-	
+
 	// Action pour quitter l'application (classe interne)
 	class actionQuitter extends AbstractAction
 	{
@@ -131,16 +143,18 @@ public class Fenetre extends JFrame
 			System.exit(0);
 		}
 	}
-	
+
 	// Action temporaire d'import d'un fichier
 	class actionImport extends AbstractAction
 	{
 		public void actionPerformed(ActionEvent e)
 		{
-//			donnees.importDonnees();
+			donnees.importDonnees();
+			Fenetre.this.actualiserAffichage();
+			jop1.showMessageDialog(null, "Les nouvelles données ont été correctement importées", "Import de données", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
 	// Action pour enregistrer les données
 	class actionEnregistrer extends AbstractAction
 	{
@@ -150,27 +164,14 @@ public class Fenetre extends JFrame
 			jop1.showMessageDialog(null, "Données enregistrées", "Enregistrement", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
 	// Actions suite au clic sur l'un des boutons (classe interne)
 	class RecupererIdentifiantBouton implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
 		{
-			nomDuBoutonUtilise = ((JButton)e.getSource()).getActionCommand();
-			
-			if (nomDuBoutonUtilise.equals("Bilan"))
-			{
-				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
-				conteneurPartieCentrale = new PartieCentraleBilan(donnees);
-				Fenetre.this.actualiserAffichage();
-			}
-			else
-			{
-				conteneurGlobal.remove(conteneurPartieCentrale.getConteneurGlobal());
-				conteneurPartieCentrale = new PartieCentraleMois(donnees, nomDuBoutonUtilise);
-				Fenetre.this.actualiserAffichage();
-			}
-			
+			affichageActuel = ((JButton)e.getSource()).getActionCommand();
+			Fenetre.this.actualiserAffichage();
 		}
 	}
 
