@@ -129,26 +129,41 @@ public class ContenuDufichierDeDonnees
 		for (Map.Entry<String, Hashtable> mp1: contenuFichierXML.entrySet())
 		{
 			String cle1 = mp1.getKey();
-			Hashtable<String, Hashtable> valeur1 = mp1.getValue();
 			System.out.println(cle1);
-
-			for (Map.Entry<String, Hashtable> mp2: valeur1.entrySet())
+			
+			if (cle1.equals("restes_annee_precedente"))
 			{
-				String cle2 = mp2.getKey();
-				Hashtable<String, Hashtable> valeur2 = mp2.getValue();
-				System.out.println("\t" + cle2);
-
-				for (Map.Entry<String, Hashtable> mp3: valeur2.entrySet())
+				Hashtable<String, String> valeur1 = mp1.getValue();
+				
+				for (Map.Entry<String, String> mp2: valeur1.entrySet())
 				{
-					String cle3 = mp3.getKey();
-					Hashtable<String, String> valeur3 = mp3.getValue();
-					System.out.println("\t\t" + cle3);
-
-					for (Map.Entry<String, String> mp4: valeur3.entrySet())
+					String cle2 = mp2.getKey();
+					String valeur2 = mp2.getValue();
+					System.out.println("\t\t\t" + cle2 + " --> " + valeur2);
+				}
+			}
+			else
+			{
+				Hashtable<String, Hashtable> valeur1 = mp1.getValue();
+				
+				for (Map.Entry<String, Hashtable> mp2: valeur1.entrySet())
+				{
+					String cle2 = mp2.getKey();
+					Hashtable<String, Hashtable> valeur2 = mp2.getValue();
+					System.out.println("\t" + cle2);
+					
+					for (Map.Entry<String, Hashtable> mp3: valeur2.entrySet())
 					{
-						String cle4 = mp4.getKey();
-						String valeur4 = mp4.getValue();
-						System.out.println("\t\t\t" + cle4 + " --> " + valeur4);
+						String cle3 = mp3.getKey();
+						Hashtable<String, String> valeur3 = mp3.getValue();
+						System.out.println("\t\t" + cle3);
+						
+						for (Map.Entry<String, String> mp4: valeur3.entrySet())
+						{
+							String cle4 = mp4.getKey();
+							String valeur4 = mp4.getValue();
+							System.out.println("\t\t\t" + cle4 + " --> " + valeur4);
+						}
 					}
 				}
 			}
@@ -550,45 +565,59 @@ public class ContenuDufichierDeDonnees
 	{
 		// Initialisation du dictionnaire contenant les sommes
 		dicoDesSommes = new Hashtable<String, Float>();
-
+		
+		Hashtable<String, String> dicoRestesAnneePrecedente = contenuFichierXML.get("restes_annee_precedente");
+		
+		for (Map.Entry<String, String> categoriesRestes: dicoRestesAnneePrecedente.entrySet())
+		{
+			String nomCategorieReste = categoriesRestes.getKey();
+			Float montantReste = Float.valueOf(categoriesRestes.getValue());
+			dicoDesSommes.put(nomCategorieReste, montantReste);
+		}
+		
+		// Itération sur les mois
 		for (Map.Entry<String, Hashtable> mois: contenuFichierXML.entrySet())
 		{
 			String cleMois = mois.getKey();
-			Hashtable<String, Hashtable> valeurMois = mois.getValue();
-
-			for (Map.Entry<String, Hashtable> sousCategorie: valeurMois.entrySet())
+			
+			if (!cleMois.equals("restes_annee_precedente"))
 			{
-				String cleSousCategorie = sousCategorie.getKey();
-				Hashtable<String, Hashtable> valeurSousCategorie = sousCategorie.getValue();
-
-				for (Map.Entry<String, Hashtable> categorie: valeurSousCategorie.entrySet())
+				Hashtable<String, Hashtable> valeurMois = mois.getValue();
+	
+				for (Map.Entry<String, Hashtable> sousCategorie: valeurMois.entrySet())
 				{
-					String cleCategorie = categorie.getKey();
-					Hashtable<String, String> valeurCategorie = categorie.getValue();
-
-					// Initialisation
-					Float montantCategorie;
-
-					// Si le dictionnaire contenant les sommes contient déjà la clé alors on récupère la valeur associée
-					if (dicoDesSommes.containsKey(cleCategorie))
+					String cleSousCategorie = sousCategorie.getKey();
+					Hashtable<String, Hashtable> valeurSousCategorie = sousCategorie.getValue();
+	
+					for (Map.Entry<String, Hashtable> categorie: valeurSousCategorie.entrySet())
 					{
-						montantCategorie = dicoDesSommes.get(cleCategorie);
+						String cleCategorie = categorie.getKey();
+						Hashtable<String, String> valeurCategorie = categorie.getValue();
+	
+						// Initialisation
+						Float montantCategorie;
+	
+						// Si le dictionnaire contenant les sommes contient déjà la clé alors on récupère la valeur associée
+						if (dicoDesSommes.containsKey(cleCategorie))
+						{
+							montantCategorie = dicoDesSommes.get(cleCategorie);
+						}
+						// Sinon on initialise la valeur pour cette nouvelle clé
+						else
+						{
+							montantCategorie = 0.0f;
+						}
+	
+						// Mise à jour de la somme du montant de la catégorie associée
+						montantCategorie += Float.valueOf(valeurCategorie.get("montant"));
+	
+						// Mise à jour de la donnée dans le dictionnaire contenant les sommes
+						dicoDesSommes.put(cleCategorie, montantCategorie);
 					}
-					// Sinon on initialise la valeur pour cette nouvelle clé
-					else
-					{
-						montantCategorie = 0.0f;
-					}
-
-					// Mise à jour de la somme du montant de la catégorie associée
-					montantCategorie += Float.valueOf(valeurCategorie.get("montant"));
-
-					// Mise à jour de la donnée dans le dictionnaire contenant les sommes
-					dicoDesSommes.put(cleCategorie, montantCategorie);
 				}
 			}
 		}
-
+		
 		transformeDonneesBilan();
 	}
 
@@ -736,7 +765,7 @@ public class ContenuDufichierDeDonnees
 	{
 		// Déclaration des variables
 		String cleMois, cleCreditsDebits;
-		String nom, libelle = "", dateVirement, montant, statut;
+		String nom, libelle = "", dateVirement, montant, statut, reste;
 		Hashtable<String, Hashtable> dicoDeRetour = new Hashtable<String, Hashtable>();
 
 		// Itération sur laliste passée en argument
@@ -820,6 +849,43 @@ public class ContenuDufichierDeDonnees
 
 					// Remplissage du dictionnaire de retour
 					dicoDeRetour.put(cleCreditsDebits, dicoTmp2);
+				}
+			}
+			// On regarde si le noeud courant est de type ELEMENT et s'il est égal à resteAnneePrecedente
+			else if ((noeudCourant.getNodeType() == Node.ELEMENT_NODE) && (noeudCourant.getNodeName().equals("restesAnneePrecedente")))
+			{
+				Element elem = (Element) noeudCourant;
+				
+				// Récupération de la liste des sous-catégories
+				NodeList listeDesCategoriesDesRestes = noeudCourant.getChildNodes();
+				
+				// On vérifie que le mois en cours contient bien des données
+				if (listeDesCategoriesDesRestes.getLength() > 0)
+				{
+					// Remplissage d'un dico temporaire avec les valeurs de la catégorie courante
+					Hashtable<String, String> dicoTmp4 = new Hashtable<String, String>();
+					
+					for (int k = 0; k < listeDesCategoriesDesRestes.getLength(); k++)
+					{
+						Node noeudListeDesCategoriesDesRestes = listeDesCategoriesDesRestes.item(k);
+						
+						// On regarde si le noeud courant est de type ELEMENT et s'il est égal "catégorie"
+						if ((noeudListeDesCategoriesDesRestes.getNodeType() == Node.ELEMENT_NODE) && (noeudListeDesCategoriesDesRestes.getNodeName().equals("catégorie")))
+						{
+							Element elemListeDesCategoriesDesRestes = (Element) listeDesCategoriesDesRestes.item(k);
+							
+							// Récupération du nom de la catégorie courante
+							nom = elemListeDesCategoriesDesRestes.getAttribute("nom");
+							
+							// Récupération de la valeur de la catégorie courante
+							reste = elemListeDesCategoriesDesRestes.getAttribute("reste");
+							
+							// Alimentation du dictionnaire temporaire
+							dicoTmp4.put(nom, reste);
+						}
+					}
+					
+					dicoDeRetour.put("restes_annee_precedente", dicoTmp4);
 				}
 			}
 		}

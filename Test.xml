@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <donnees>
     <MAJ>28/03/2019</MAJ>
+	<restesAnneePrecedente>
+		<catégorie nom="A" reste="1000.0" />
+		<catégorie nom="B" reste="2000.0" />
+		<catégorie nom="C" reste="3000.0" />
+	</restesAnneePrecedente>
     <mois nom="Janvier">
         <crédits>
             <catégorie date_du_virement="01/02/2019" montant="10.0" nom="A" statut="true"/>
@@ -13,7 +18,7 @@
             <catégorie date_du_virement="01/03/2019" libellé="raison 2" montant="-25.0" nom="B" statut="true"/>
         </débits>
     </mois>
-    <mois nom="Mars">
+    <mois nom="Avril">
         <crédits>
             <catégorie date_du_virement="01/05/2019" montant="200.0" nom="A" statut="true"/>
             <catégorie date_du_virement="01/07/2019" montant="600.0" nom="C" statut="true"/>
