@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.swing.AbstractAction;
@@ -17,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 public class Fenetre extends JFrame
 {
@@ -67,6 +69,9 @@ public class Fenetre extends JFrame
 	    int mois = dateActuelle.getMonthValue();
 	    affichageActuel = dicoCorrespondanceDesMois.get(mois);
 	    
+	    // Mise-à-jour du graphisme des boutons
+	    upDateAspectBouton();
+	    
 	    // Initialisations
 	    conteneurPartieCentrale = new PartieCentraleMois(donnees, affichageActuel);
 	    remplissageBandeauInformation();
@@ -105,7 +110,25 @@ public class Fenetre extends JFrame
 	    // Affichage de la fenêtre
 	    this.setVisible(true);
 	}
-
+	
+	// Méthode qui permet de mettre à jour l'aspect des boutons selon celui qui est sélectionné
+	public void upDateAspectBouton()
+	{
+		HashMap<String, JButton> dicoDesBoutons = conteneurPartieDroite.getDicoDesBoutons();
+		
+		for(HashMap.Entry<String, JButton> boutonMois: dicoDesBoutons.entrySet())
+		{
+			if (boutonMois.getKey().equals(affichageActuel))
+			{
+				boutonMois.getValue().setBackground(Color.GREEN);
+			}
+			else
+			{
+				boutonMois.getValue().setBackground(UIManager.getColor("Button.background"));
+			}
+		}
+	}
+	
 	// Méthode qui permet de remplir les JLabel du bandeau d'informations générales
 	public void remplissageBandeauInformation()
 	{
@@ -171,6 +194,8 @@ public class Fenetre extends JFrame
 		public void actionPerformed(ActionEvent e)
 		{
 			affichageActuel = ((JButton)e.getSource()).getActionCommand();
+			// Mise-à-jour du graphisme des boutons
+		    upDateAspectBouton();
 			Fenetre.this.actualiserAffichage();
 		}
 	}

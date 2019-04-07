@@ -31,7 +31,7 @@ public class PanneauLateral
 	private GridLayout glMois = new GridLayout(listeDesMois.length + 3, 1);
 	private JButton boutonBilan = new JButton("Bilan");
 	private List<JButton> listeDesBoutons = new ArrayList<JButton>();
-	
+	private HashMap<String, JButton> dicoDesBoutons = new HashMap<String, JButton>();
 	
 	// Accesseurs
 	public JPanel getConteneurPartieDroite()
@@ -44,6 +44,13 @@ public class PanneauLateral
 		return listeDesBoutons;
 	}
 	
+	public HashMap<String, JButton> getDicoDesBoutons()
+	{
+		dicoDesMois.forEach((cle, valeur) -> dicoDesBoutons.put(cle, valeur)); 
+		dicoDesBoutons.put("Bilan", boutonBilan);
+		
+		return dicoDesBoutons;
+	}
 	
 	// Constructeur sans arguments
 	public PanneauLateral()
